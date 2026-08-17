@@ -9,6 +9,8 @@ import { ProductContextProvider } from './context/ProductContext.jsx'
 import DetailProduct from './pages/DetailProducts.jsx'
 import { CartContextProvider } from './context/CartContext.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
+import CategoryPage from './pages/CategoryPage.jsx'
+import SubcategoryPage from './pages/SubcategoryPage.jsx'
 
 function App() {
     return (
@@ -31,6 +33,14 @@ function App() {
                                 path="/admin/dashboard/*"
                                 element={<AdminDashboard />}
                             ></Route>
+                            <Route
+                                path="/categoria/:categorySlug"
+                                element={<CategoryPage />}
+                            />
+                            <Route
+                                path="/categoria/:categorySlug/:subcategorySlug"
+                                element={<SubcategoryPage />}
+                            />
                         </Route>
                     </Routes>
                 </CartContextProvider>
