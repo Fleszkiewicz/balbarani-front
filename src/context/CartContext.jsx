@@ -8,7 +8,32 @@ import {
     deleteCartService,
     clearCartService,
 } from '../services/cartServices'
+import {
+    calculateConfiguredUnitTotal,
+    getCartLineKey,
+} from '../utils/artisanIceCream.js'
 import { toast } from 'react-hot-toast'
+
+const mapCartItemFromBackend = (item) => {
+    const configuration = item.configuration || null
+    const basePrice = item.productId.price
+
+    return {
+        _id: item.productId._id,
+        name: item.productId.name,
+        price: basePrice,
+        imageUrl: item.productId.imageUrl,
+        description: item.productId.description,
+        stock: item.productId.stock,
+        inventoryType: item.productId.inventoryType,
+        quantity: item.quantity,
+        configuration,
+        unitTotal: configuration
+            ? calculateConfiguredUnitTotal(basePrice, configuration)
+            : basePrice,
+        cartLineKey: getCartLineKey(item.productId._id, configuration),
+    }
+}
 
 export const CartContextProvider = ({ children }) => {
     const [cart, setCart] = useState([])
@@ -22,7 +47,28 @@ export const CartContextProvider = ({ children }) => {
     const loadLocalCart = useCallback(() => {
         try {
             const localCart = localStorage.getItem('cart')
-            return localCart ? JSON.parse(localCart) : []
+            const parsed = localCart ? JSON.parse(localCart) : []
+
+            return parsed.map((item) => {
+                const configuration = item.configuration || null
+                const unitTotal =
+                    item.unitTotal ??
+                    (configuration
+                        ? calculateConfiguredUnitTotal(
+                              item.price,
+                              configuration,
+                          )
+                        : item.price)
+
+                return {
+                    ...item,
+                    configuration,
+                    unitTotal,
+                    cartLineKey:
+                        item.cartLineKey ||
+                        getCartLineKey(item._id, configuration),
+                }
+            })
         } catch (error) {
             console.error('Error al cargar carrito local:', error)
             return []
@@ -44,15 +90,7 @@ export const CartContextProvider = ({ children }) => {
                 const response = await getCartService(userId)
 
                 const cartItems =
-                    response.cart?.products?.map((item) => ({
-                        _id: item.productId._id,
-                        name: item.productId.name,
-                        price: item.productId.price,
-                        imageUrl: item.productId.imageUrl,
-                        description: item.productId.description,
-                        stock: item.productId.stock,
-                        quantity: item.quantity,
-                    })) || []
+                    response.cart?.products?.map(mapCartItemFromBackend) || []
 
                 setCart(cartItems)
             } catch (error) {
@@ -78,7 +116,12 @@ export const CartContextProvider = ({ children }) => {
 
                 for (const item of localCart) {
                     try {
-                        await addToCartService(userId, item._id, item.quantity)
+                        await addToCartService(
+                            userId,
+                            item._id,
+                            item.quantity,
+                            item.configuration || null,
+                        )
                     } catch (error) {
                         console.log(
                             `Error al sincronizar producto ${item.name}:`,
@@ -188,7 +231,8 @@ export const CartContextProvider = ({ children }) => {
     const total = useMemo(
         () =>
             cart.reduce(
-                (acc, item) => acc + item.price * (item.quantity || 1),
+                (acc, item) =>
+                    acc + (item.unitTotal ?? item.price) * (item.quantity || 1),
                 0,
             ),
         [cart],
@@ -199,11 +243,39 @@ export const CartContextProvider = ({ children }) => {
         [cart],
     )
 
+    const isSameCartItem = (item, product) => {
+        const lineKey = product.cartLineKey ||
+            getCartLineKey(product._id, product.configuration || null)
+        return item.cartLineKey === lineKey
+    }
+
     const addToCart = async (product, quantity = 1) => {
+        const configuration = product.configuration || null
+        const cartLineKey =
+            product.cartLineKey ||
+            getCartLineKey(product._id, configuration)
+        const unitTotal =
+            product.unitTotal ??
+            (configuration
+                ? calculateConfiguredUnitTotal(product.price, configuration)
+                : product.price)
+
+        const cartProduct = {
+            ...product,
+            configuration,
+            unitTotal,
+            cartLineKey,
+        }
+
         if (authenticated && userId) {
             try {
                 setLoading(true)
-                await addToCartService(userId, product._id, quantity)
+                await addToCartService(
+                    userId,
+                    product._id,
+                    quantity,
+                    configuration,
+                )
                 await loadCart()
                 toast.success('Producto agregado al carrito')
             } catch (error) {
@@ -217,14 +289,14 @@ export const CartContextProvider = ({ children }) => {
         } else {
             try {
                 const currentCart = [...cart]
-                const existingIndex = currentCart.findIndex(
-                    (item) => item._id === product._id,
+                const existingIndex = currentCart.findIndex((item) =>
+                    isSameCartItem(item, cartProduct),
                 )
 
                 if (existingIndex > -1) {
                     currentCart[existingIndex].quantity += quantity
                 } else {
-                    currentCart.push({ ...product, quantity })
+                    currentCart.push({ ...cartProduct, quantity })
                 }
 
                 setCart(currentCart)
@@ -237,11 +309,19 @@ export const CartContextProvider = ({ children }) => {
         }
     }
 
-    const removeFromCart = async (productId) => {
+    const removeFromCart = async (cartLineKey) => {
+        const targetItem = cart.find((item) => item.cartLineKey === cartLineKey)
+
+        if (!targetItem) return
+
         if (authenticated && userId) {
             try {
                 setLoading(true)
-                await deleteCartService(userId, productId)
+                await deleteCartService(
+                    userId,
+                    targetItem._id,
+                    targetItem.configuration || null,
+                )
                 await loadCart()
                 toast.success('Producto eliminado del carrito')
             } catch (error) {
@@ -255,7 +335,7 @@ export const CartContextProvider = ({ children }) => {
         } else {
             try {
                 const currentCart = cart.filter(
-                    (item) => item._id !== productId,
+                    (item) => item.cartLineKey !== cartLineKey,
                 )
                 setCart(currentCart)
                 saveLocalCart(currentCart)
@@ -267,16 +347,25 @@ export const CartContextProvider = ({ children }) => {
         }
     }
 
-    const updateQuantity = async (productId, newQuantity) => {
+    const updateQuantity = async (cartLineKey, newQuantity) => {
         if (newQuantity < 1) {
             toast.error('La cantidad debe ser al menos 1')
             return
         }
 
+        const targetItem = cart.find((item) => item.cartLineKey === cartLineKey)
+
+        if (!targetItem) return
+
         if (authenticated && userId) {
             try {
                 setLoading(true)
-                await updateCartService(userId, productId, newQuantity)
+                await updateCartService(
+                    userId,
+                    targetItem._id,
+                    newQuantity,
+                    targetItem.configuration || null,
+                )
                 await loadCart()
                 toast.success('Cantidad actualizada')
             } catch (error) {
@@ -288,7 +377,7 @@ export const CartContextProvider = ({ children }) => {
         } else {
             try {
                 const currentCart = cart.map((item) =>
-                    item._id === productId
+                    item.cartLineKey === cartLineKey
                         ? { ...item, quantity: newQuantity }
                         : item,
                 )

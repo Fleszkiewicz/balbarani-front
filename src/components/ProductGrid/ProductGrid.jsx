@@ -48,7 +48,11 @@ const ProductGrid = ({ categorySlug, subcategorySlug }) => {
     return (
         <div className="flex flex-wrap gap-5 justify-center px-4 pb-10">
             {products.map((product) => (
-                <CardProduct key={product._id} product={product} />
+                <CardProduct
+                    key={product._id}
+                    product={product}
+                    categorySlug={categorySlug}
+                />
             ))}
         </div>
     )
