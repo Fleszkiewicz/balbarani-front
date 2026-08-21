@@ -36,6 +36,10 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
         return !!userInfo?.id
     }
 
+    const isAdmin = () => {
+        return !!userInfo?.isAdmin
+    }
+
     useEffect(() => {
         Promise.resolve().then(checkSession)
     }, [])
@@ -49,6 +53,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
                 checkSession,
                 getUserId,
                 isAuthenticated,
+                isAdmin,
             }}
         >
             {children}

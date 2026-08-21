@@ -1,12 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { useCart } from '../../context/cartContextData.js'
-import { getAllProductsService } from '../../services/productServices.js'
-import { CATEGORY_SLUGS } from '../../constants/categories.js'
 import {
     buildConfigurationPayload,
     buildFlavorQuantities,
-    calculateConfiguredUnitTotal,
     getMaxFlavorPortions,
     getTotalSelectedPortions,
     isFlavorConfigurationValid,
@@ -23,9 +20,6 @@ const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
     const [flavorQuantities, setFlavorQuantities] = useState(() =>
         buildFlavorQuantities(flavors),
     )
-    const [extraQuantities, setExtraQuantities] = useState({})
-    const [availableExtras, setAvailableExtras] = useState([])
-    const [extrasLoading, setExtrasLoading] = useState(true)
 
     const totalPortions = getTotalSelectedPortions(flavorQuantities)
     const isConfigurationValid = isFlavorConfigurationValid(
@@ -33,42 +27,10 @@ const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
         flavorQuantities,
     )
 
-    useEffect(() => {
-        const fetchExtras = async () => {
-            try {
-                setExtrasLoading(true)
-                const data = await getAllProductsService(
-                    CATEGORY_SLUGS.EXTRAS,
-                )
-                setAvailableExtras(data)
-                setExtraQuantities(
-                    Object.fromEntries(data.map((extra) => [extra._id, 0])),
-                )
-            } catch {
-                setAvailableExtras([])
-            } finally {
-                setExtrasLoading(false)
-            }
-        }
-
-        fetchExtras()
-    }, [])
-
-    const selectedExtras = useMemo(
-        () =>
-            availableExtras.map((extra) => ({
-                ...extra,
-                quantity: extraQuantities[extra._id] || 0,
-            })),
-        [availableExtras, extraQuantities],
-    )
-
     const configuration = useMemo(
-        () => buildConfigurationPayload(flavorQuantities, selectedExtras),
-        [flavorQuantities, selectedExtras],
+        () => buildConfigurationPayload(flavorQuantities),
+        [flavorQuantities],
     )
-
-    const unitTotal = calculateConfiguredUnitTotal(price, configuration)
 
     const handleFlavorChange = (flavorName, delta) => {
         setFlavorQuantities((prev) => {
@@ -77,17 +39,6 @@ const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
             if (nextValue < 0) return prev
             if (delta > 0 && totalPortions >= maxPortions) return prev
             return { ...prev, [flavorName]: nextValue }
-        })
-    }
-
-    const handleExtraChange = (extraId, delta, extra) => {
-        setExtraQuantities((prev) => {
-            const current = prev[extraId] || 0
-            const nextValue = current + delta
-            if (nextValue < 0) return prev
-            if (delta > 0 && extra.stock !== undefined && nextValue > extra.stock)
-                return prev
-            return { ...prev, [extraId]: nextValue }
         })
     }
 
@@ -108,7 +59,7 @@ const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
             stock,
             inventoryType: 'flavor',
             configuration,
-            unitTotal,
+            unitTotal: price,
             categorySlug,
         })
 
@@ -172,68 +123,10 @@ const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
                     </p>
                 </div>
 
-                <div className="mb-6">
-                    <h4 className="font-semibold mb-3">Extras</h4>
-                    {extrasLoading ? (
-                        <div className="loading loading-spinner loading-sm"></div>
-                    ) : availableExtras.length === 0 ? (
-                        <p className="text-sm text-gray-500">
-                            No hay extras disponibles por ahora.
-                        </p>
-                    ) : (
-                        <ul className="space-y-3">
-                            {availableExtras.map((extra) => {
-                                const qty = extraQuantities[extra._id] || 0
-                                const unavailable =
-                                    extra.stock !== undefined &&
-                                    extra.stock <= 0
-
-                                return (
-                                    <li
-                                        key={extra._id}
-                                        className={`flex items-center justify-between gap-3 ${unavailable ? 'text-gray-400' : ''}`}
-                                    >
-                                        <div className="flex-1">
-                                            <span>{extra.name}</span>
-                                            <span className="text-sm text-gray-500 ml-2">
-                                                ${extra.price}
-                                            </span>
-                                        </div>
-                                        <QuantityStepper
-                                            value={qty}
-                                            unavailable={unavailable}
-                                            disabledDecrease={qty <= 0}
-                                            disabledIncrease={
-                                                unavailable ||
-                                                (extra.stock !== undefined &&
-                                                    qty >= extra.stock)
-                                            }
-                                            onDecrease={() =>
-                                                handleExtraChange(
-                                                    extra._id,
-                                                    -1,
-                                                    extra,
-                                                )
-                                            }
-                                            onIncrease={() =>
-                                                handleExtraChange(
-                                                    extra._id,
-                                                    1,
-                                                    extra,
-                                                )
-                                            }
-                                        />
-                                    </li>
-                                )
-                            })}
-                        </ul>
-                    )}
-                </div>
-
                 <div className="border-t pt-4 flex items-center justify-between gap-4">
                     <div>
-                        <p className="text-sm text-gray-500">Total unidad</p>
-                        <p className="text-xl font-bold">${unitTotal}</p>
+                        <p className="text-sm text-gray-500">Precio</p>
+                        <p className="text-xl font-bold">${price}</p>
                     </div>
                     <button
                         type="button"

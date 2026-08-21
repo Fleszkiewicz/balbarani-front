@@ -37,21 +37,12 @@ export const isFlavorConfigurationValid = (productName, flavorQuantities) => {
     return getTotalSelectedPortions(flavorQuantities) === max
 }
 
-export const buildConfigurationPayload = (flavorQuantities, extras = []) => {
+export const buildConfigurationPayload = (flavorQuantities) => {
     const flavors = Object.entries(flavorQuantities)
         .filter(([, qty]) => qty > 0)
         .map(([name, quantity]) => ({ name, quantity }))
 
-    const selectedExtras = extras
-        .filter((extra) => extra.quantity > 0)
-        .map(({ _id, name, price, quantity }) => ({
-            productId: _id,
-            name,
-            price,
-            quantity,
-        }))
-
-    return { flavors, extras: selectedExtras }
+    return { flavors, extras: [] }
 }
 
 export const calculateConfiguredUnitTotal = (basePrice, configuration) => {

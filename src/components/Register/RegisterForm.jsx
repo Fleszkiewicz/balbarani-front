@@ -40,11 +40,11 @@ const RegisterForm = () => {
     }
 
     if (redirect && userInfo.isAdmin) {
-        ///llevarlo a la pagina admin
+        return <Navigate to="/admin/dashboard" replace />
     }
 
     if (redirect && !userInfo.isAdmin) {
-        return <Navigate to={'/'} />
+        return <Navigate to="/" replace />
     }
 
     return (

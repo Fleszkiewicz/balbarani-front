@@ -1,12 +1,11 @@
 import { FiUser } from 'react-icons/fi'
+import { Link } from 'react-router-dom'
 import { useUser } from '../../context/userContextData'
 import toast from 'react-hot-toast'
 import { logoutService } from '../../services/authServices'
 
-
-
 const UserDropDown = () => {
-    const { setUserInfo } = useUser()
+    const { setUserInfo, isAdmin } = useUser()
 
     const handleLogout = async () => {
         try {
@@ -42,8 +41,12 @@ const UserDropDown = () => {
                 <li>
                     <a className="justify-between">Configuración</a>
                 </li>
+                {isAdmin() && (
+                    <li>
+                        <Link to="/admin/dashboard">Panel Admin</Link>
+                    </li>
+                )}
                 <li>
-
                     <a onClick={handleLogout}className="justify-between">Cerrar Sesión</a>
                 </li>
             </ul>
