@@ -19,34 +19,38 @@ const Cart = () => {
                     <div
                         tabIndex={0}
                         role="button"
-                        className="btn btn-success btn-circle"
+                        className="transition-transform hover:scale-105 active:scale-95"
                     >
-                        <div className="indicator">
-                            <FiShoppingCart size={24} />
-                            <span className="badge badge-sm indicator-item rounded-full bg-red-500 text-white">
-                                {itemsQuantity}
-                            </span>
+                        <div className="indicator relative">
+                            <div className="w-11 h-11 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-700 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                                <FiShoppingCart size={20} strokeWidth={2.5} />
+                            </div>
+                            {itemsQuantity > 0 && (
+                                <span className="absolute -top-1 -right-1 flex h-[22px] w-[22px] items-center justify-center rounded-full bg-black text-xs font-bold text-white shadow-sm ring-2 ring-white">
+                                    {itemsQuantity}
+                                </span>
+                            )}
                         </div>
                     </div>
                     <div
                         tabIndex={0}
-                        className="card card-compact dropdown-content bg-base-100 z-[1000] mt-3 w-52 shadow"
+                        className="dropdown-content bg-white rounded-[1.5rem] mt-3 z-[1000] w-64 p-4 shadow-[0_10px_35px_rgba(0,0,0,0.08)] border border-gray-100"
                     >
-                        <div className="card-body">
-                            <span className="text-lg font-bold">
-                                {itemsQuantity} items
-                            </span>
-                            <span className="text-info">
-                                Subtotal: ${total}
-                            </span>
-                            <div className="card-actions">
-                                <button
-                                    onClick={handleViewCartClick}
-                                    className="btn btn-primary btn-block"
-                                >
-                                    Ver Carrito
-                                </button>
+                        <div className="flex flex-col gap-3">
+                            <div className="flex justify-between items-center px-1">
+                                <span className="text-gray-500 font-medium text-sm">
+                                    {itemsQuantity} {itemsQuantity === 1 ? 'producto' : 'productos'}
+                                </span>
+                                <span className="font-bold text-lg text-gray-900">
+                                    ${total}
+                                </span>
                             </div>
+                            <button
+                                onClick={handleViewCartClick}
+                                className="w-full rounded-full bg-black hover:bg-neutral-800 text-white transition-colors mt-1 font-semibold h-11 flex items-center justify-center shadow-sm"
+                            >
+                                Ver Carrito
+                            </button>
                         </div>
                     </div>
                 </div>

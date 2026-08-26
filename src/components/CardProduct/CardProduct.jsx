@@ -10,7 +10,10 @@ const CardProduct = ({ product, categorySlug }) => {
 
     if (cardType === PRODUCT_CARD_TYPES.ARTISAN_ICE_CREAM) {
         return (
-            <ArtisanIceCreamCard product={product} categorySlug={categorySlug} />
+            <ArtisanIceCreamCard
+                product={product}
+                categorySlug={categorySlug}
+            />
         )
     }
 
@@ -48,42 +51,37 @@ const DefaultProductCard = ({ product }) => {
     }
 
     return (
-        <div className="card bg-base-100 w-80 lg:w-[30%] shadow-lg">
-            <figure>
+        <div className="bg-white w-48 min-w-48 shrink-0 shadow-sm rounded-[1.5rem] p-2 flex flex-col gap-2 transition-transform hover:scale-[1.02] border border-gray-100">
+            <div className="relative w-full aspect-square rounded-[1rem] overflow-hidden bg-gray-50">
                 <img
-                    className="aspect-[9/9] object-cover w-full"
+                    className="w-full h-full object-cover"
                     src={imageUrl}
                     alt={name}
                 />
-            </figure>
-            <div className="card-body">
-                <h2 className="card-title">{name}</h2>
-                <div className="badge badge-warning">${price}</div>
-                <p>{description}</p>
+            </div>
 
-                {isFlavorProduct && flavors.length > 0 && (
-                    <p className="text-sm text-gray-500">
-                        {flavors.filter((f) => f.available).length} sabores
-                        disponibles
-                    </p>
-                )}
-
-                <div className="card-actions justify-between mt-4">
-                    <Link
-                        to={`/detailProduct/${_id}`}
-                        className="btn btn-info btn-sm md:btn-md"
-                    >
-                        Ver Detalles
-                    </Link>
-                    <button
-                        onClick={handleAddToCart}
-                        disabled={isAddDisabled}
-                        className="btn btn-success btn-sm md:btn-md"
-                    >
-                        <FaShoppingCart size={16} />
-                        {stock === 0 ? 'Sin Stock' : 'Agregar'}
-                    </button>
+            <div className="px-1 flex flex-col flex-1 gap-1 pb-1">
+                <p className="font-bold text-sm leading-tight text-gray-900 line-clamp-2">
+                    {name}
+                </p>
+                <p className="text-xs font-medium text-gray-400 line-clamp-3">
+                    {description}
+                </p>
+                <div className="flex justify-between items-center mt-1">
+                    <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap">
+                        ${price}
+                    </span>
                 </div>
+
+                <div className="flex-1"></div>
+
+                <button
+                    onClick={handleAddToCart}
+                    disabled={isAddDisabled}
+                    className="h-8 w-full rounded-full bg-[#4a3f35] hover:bg-[#362e26] text-white transition-colors mt-2 text-xs font-semibold flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {stock === 0 && !isFlavorProduct ? 'Sin Stock' : 'Añadir'}
+                </button>
             </div>
         </div>
     )

@@ -31,3 +31,46 @@ export const getProductByIdService = async (productId) => {
         })
     }
 }
+
+//servicio para crear un producto
+export const createProductService = async (data) => {
+    try {
+        const response = await axios.post(API_URL, data)
+        return response.data
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.[0]?.message ||
+            error.response?.data?.message ||
+            'Error al crear el producto',
+            { cause: error },
+        )
+    }
+}
+
+//servicio para actualizar un producto
+export const updateProductService = async (id, data) => {
+    try {
+        const response = await axios.put(`${API_URL}/${id}`, data)
+        return response.data
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.[0]?.message ||
+            error.response?.data?.message ||
+            'Error al actualizar el producto',
+            { cause: error },
+        )
+    }
+}
+
+//servicio para eliminar un producto
+export const deleteProductService = async (id) => {
+    try {
+        const response = await axios.delete(`${API_URL}/${id}`)
+        return response.data
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.message || 'Error al eliminar el producto',
+            { cause: error },
+        )
+    }
+}

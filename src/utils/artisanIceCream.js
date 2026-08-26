@@ -13,12 +13,15 @@ export const getMaxFlavorPortions = (productName = '') => {
 }
 
 export const getProductCardType = (product, categorySlug) => {
+    // Si el producto pertenece a "Helados Artesanales" y es de tipo 'flavor',
+    // usa la card especial que abre el configurador de sabores.
     if (
         categorySlug === CATEGORY_SLUGS.HELADO_ARTESANAL &&
         product?.inventoryType === 'flavor'
     ) {
         return PRODUCT_CARD_TYPES.ARTISAN_ICE_CREAM
     }
+    // Para todas las demás categorías, card normal con "Agregar al carrito".
     return PRODUCT_CARD_TYPES.DEFAULT
 }
 

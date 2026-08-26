@@ -15,3 +15,45 @@ export const getSubcategoriesByCategoryService = async (categorySlug) => {
         })
     }
 }
+
+//servicio para crear una subcategoria
+export const createSubcategoryService = async (data) => {
+    try {
+        const response = await axios.post(`${API_URL}/`, data)
+        return response.data
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.message ||
+            'Error al crear la subcategoría',
+            { cause: error },
+        )
+    }
+}
+
+//servicio para eliminar una subcategoria
+export const deleteSubcategoryService = async (id) => {
+    try {
+        const response = await axios.delete(`${API_URL}/${id}`)
+        return response.data
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.message ||
+            'Error al eliminar la subcategoría',
+            { cause: error },
+        )
+    }
+}
+
+//servicio para actualizar una subcategoria
+export const updateSubcategoryService = async (id, data) => {
+    try {
+        const response = await axios.put(`${API_URL}/${id}`, data)
+        return response.data
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.message ||
+            'Error al actualizar la subcategoría',
+            { cause: error },
+        )
+    }
+}

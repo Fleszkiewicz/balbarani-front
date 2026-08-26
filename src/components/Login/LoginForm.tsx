@@ -23,6 +23,24 @@ const LoginForm = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [redirect, setRedirect] = useState(false)
 
+    const inputClass = `
+    w-full
+    rounded-2xl
+    border
+    border-base-content/10
+    bg-base-100/80
+    px-4
+    py-3
+    text-sm
+    backdrop-blur-sm
+    transition-all
+    duration-300
+    outline-none
+    focus:border-primary/40
+    focus:ring-4
+    focus:ring-primary/10
+`
+
     const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
         const result = await loginService(data, reset, setRedirect, setUserInfo)
 
@@ -44,7 +62,21 @@ const LoginForm = () => {
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className="mt-8 flex flex-col gap-4 lg:gap-6 max-w-[500px] mx-auto "
+            className="
+        mx-auto
+        mt-8
+        flex
+        max-w-md
+        flex-col
+        gap-5
+        rounded-[28px]
+        border
+        border-base-content/10
+        bg-base-100/70
+        p-8
+        shadow-[0_10px_35px_rgba(0,0,0,0.08)]
+        backdrop-blur-sm
+    "
         >
             {/* Formulario de registro de email */}
             <div>
@@ -64,11 +96,12 @@ const LoginForm = () => {
                             message: 'Máximo 254 caracteres',
                         },
                     })}
-                    className={`p-2 outline-2 rounded border focus:outline-primary w-full ${
+                    className={`${inputClass} ${
                         errors.email
-                            ? 'border-red-500 outline-red-500 focus:outline-red-500'
-                            : ''
-                    }`}
+                            ? 'border-red-500 focus:ring-red-500/10'
+                            : 'border-base-content/10'
+                    }
+`}
                     autoComplete="email"
                     name="email"
                     placeholder="Correo electrónico"
@@ -84,45 +117,56 @@ const LoginForm = () => {
             </div>
 
             {/* Formulario de registro de contraseña */}
-            <div className="relative">
-                <input
-                    {...register('password', {
-                        required: 'La contraseña es requerida',
-                        minLength: {
-                            value: 8,
-                            message: 'Minimo 8 caracteres',
-                        },
-                        maxLength: {
-                            value: 254,
-                            message: 'Máximo 254 caracteres',
-                        },
-                    })}
-                    className={`p-2 pr-12 outline-2 rounded border focus:outline-primary w-full ${
-                        errors.password
-                            ? 'border-red-500 outline-red-500 focus:outline-red-500'
-                            : ''
-                    }`}
-                    autoComplete="current-password"
-                    name="password"
-                    placeholder="Contraseña"
-                    type={showPassword ? 'text' : 'password'}
-                />
-                <button
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    aria-label={
-                        showPassword
-                            ? 'Ocultar contraseña'
-                            : 'Mostrar contraseña'
-                    }
-                    type="button"
-                    className="cursor-pointer absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
-                >
-                    {showPassword ? (
-                        <FaEyeSlash size={18} />
-                    ) : (
-                        <FaEye size={18} />
-                    )}
-                </button>
+            <div>
+                <div className="relative">
+                    <input
+                        {...register('password', {
+                            required: 'La contraseña es requerida',
+                            minLength: {
+                                value: 8,
+                                message: 'Minimo 8 caracteres',
+                            },
+                            maxLength: {
+                                value: 254,
+                                message: 'Máximo 254 caracteres',
+                            },
+                        })}
+                        className={`${inputClass}${
+                            errors.password
+                                ? 'border-red-500 focus:ring-red-500/10'
+                                : 'border-base-content/10'
+                        }
+`}
+                        autoComplete="current-password"
+                        name="password"
+                        placeholder="Contraseña"
+                        type={showPassword ? 'text' : 'password'}
+                    />
+                    <button
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        aria-label={
+                            showPassword
+                                ? 'Ocultar contraseña'
+                                : 'Mostrar contraseña'
+                        }
+                        type="button"
+                        className="
+    absolute
+    right-4
+    top-1/2
+    -translate-y-1/2
+    text-base-content/50
+    transition-colors
+    hover:text-base-content
+"
+                    >
+                        {showPassword ? (
+                            <FaEyeSlash size={18} />
+                        ) : (
+                            <FaEye size={18} />
+                        )}
+                    </button>
+                </div>
                 {errors.password && (
                     <p className="text-red-500 text-sm mt-2 ml-1 ">
                         {typeof errors.password.message === 'string'
@@ -131,8 +175,23 @@ const LoginForm = () => {
                     </p>
                 )}
             </div>
-            <button className="btn btn-primary" type="submit">
-                Iniciar Sesión
+            <button
+                type="submit"
+                className="
+        mt-2
+        rounded-full
+        bg-neutral
+        px-6
+        py-3
+        font-medium
+        text-neutral-content
+        transition-all
+        duration-300
+        hover:-translate-y-0.5
+        hover:shadow-lg
+    "
+            >
+                Iniciar sesión
             </button>
         </form>
     )

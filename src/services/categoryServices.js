@@ -27,3 +27,42 @@ export const getCategoryBySlugService = async (slug) => {
         })
     }
 }
+
+//servicio para crear una categoria
+export const createCategoryService = async (data) => {
+    try {
+        const response = await axios.post(API_URL, data)
+        return response.data
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.message || 'Error al crear la categoría',
+            { cause: error },
+        )
+    }
+}
+
+//servicio para actualizar una categoría 
+export const updateCategoryService = async (id, data) => {
+    try {
+        const response = await axios.put(`${API_URL}/${id}`, data)
+        return response.data
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.message || 'Error al actualizar la categoría',
+            { cause: error },
+        )
+    }
+}
+
+//servicio para eliminar una categoría
+export const deleteCategoryService = async (id) => {
+    try {
+        const response = await axios.delete(`${API_URL}/${id}`)
+        return response.data
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.message || 'Error al eliminar la categoría',
+            { cause: error },
+        )
+    }
+}

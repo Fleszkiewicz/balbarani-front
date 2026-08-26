@@ -22,32 +22,31 @@ const UserDropDown = () => {
             <div
                 tabIndex={0}
                 role="button"
-                className="btn btn-ghost btn-circle avatarrole"
+                className="transition-transform hover:scale-105 active:scale-95"
             >
-                <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                    <FiUser size={24} />
+                <div className="w-11 h-11 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-700 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                    <FiUser size={20} strokeWidth={2.5} />
                 </div>
             </div>
             <ul
                 tabIndex={0}
-                className="menu menu-compact dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow"
+                className="menu dropdown-content bg-white rounded-[1.5rem] mt-3 z-1 w-52 p-3 shadow-[0_10px_35px_rgba(0,0,0,0.08)] border border-gray-100 gap-1"
             >
                 <li>
-                    <a className="justify-between">
+                    <a className="rounded-xl hover:bg-gray-50 text-gray-700 font-medium py-2.5">
                         Perfil
-                        <span className="badge">Nuevo</span>
                     </a>
                 </li>
                 <li>
-                    <a className="justify-between">Configuración</a>
+                    <a className="rounded-xl hover:bg-gray-50 text-gray-700 font-medium py-2.5">Configuración</a>
                 </li>
                 {isAdmin() && (
                     <li>
-                        <Link to="/admin/dashboard">Panel Admin</Link>
+                        <Link to="/admin/dashboard" className="rounded-xl hover:bg-gray-50 text-gray-700 font-medium py-2.5">Panel Admin</Link>
                     </li>
                 )}
                 <li>
-                    <a onClick={handleLogout}className="justify-between">Cerrar Sesión</a>
+                    <a onClick={handleLogout} className="rounded-xl hover:bg-red-50 text-red-600 font-medium py-2.5 mt-1">Cerrar Sesión</a>
                 </li>
             </ul>
         </div>

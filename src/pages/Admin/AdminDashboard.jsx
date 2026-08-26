@@ -1,9 +1,13 @@
 import { Routes, Route } from 'react-router'
 import AdminLayout from '../../layout/AdminLayout.jsx'
 import AdminPlaceholder from '../Admin/AdminPlaceholder.jsx'
+import AdminInventory from './AdminInventory.jsx'
 import CreateProduct from '../CreateProduct.jsx'
 import UpdateProduct from '../UpdateProduct.jsx'
 import TableProductDashboard from '../../components/AdminDashboard/TableProductDashboard/TableProductDashboard.jsx'
+import AdminCatalog from './AdminCatalog.jsx'
+import AdminCategoryDetail from './AdminCategoryDetail.jsx'
+import AdminSubcategoryDetail from './AdminSubcategoryDetail.jsx'
 
 const AdminDashboard = () => {
     return (
@@ -21,21 +25,21 @@ const AdminDashboard = () => {
                     />
                     <Route
                         path="catalogo"
-                        element={
-                            <AdminPlaceholder
-                                title="Catálogo"
-                                description="Acá vas a gestionar categorías, subcategorías y productos sobre la misma vista del catálogo."
-                            />
-                        }
+                        element={<AdminCatalog />}
                     />
                     <Route
+                        path="catalogo/:categorySlug"
+                        element={<AdminCategoryDetail />}
+                    />
+                    <Route
+                        path="catalogo/:categorySlug/:subcategorySlug"
+                        element={<AdminSubcategoryDetail />}
+                    />
+
+
+                    <Route
                         path="inventario"
-                        element={
-                            <AdminPlaceholder
-                                title="Inventario"
-                                description="Acá vas a ajustar stock con [-] [+] y disponibilidad de sabores."
-                            />
-                        }
+                        element={<AdminInventory />}
                     />
                     <Route
                         path="pedidos"

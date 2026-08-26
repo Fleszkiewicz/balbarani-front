@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { getCategoryBySlugService } from '../services/categoryServices.js'
 import { getSubcategoriesByCategoryService } from '../services/subcategoryServices.js'
-import SubcategoryGrid from '../components/SubcategoryGrid/SubcategoryGrid.jsx'
+import { getAllProductsService } from '../services/productServices.js'
+import CardProduct from '../components/CardProduct/CardProduct.jsx'
 import ProductGrid from '../components/ProductGrid/ProductGrid.jsx'
 
 const CategoryPage = () => {
@@ -10,11 +11,26 @@ const CategoryPage = () => {
 
     const [category, setCategory] = useState(null)
     const [subcategories, setSubcategories] = useState([])
+    const [productsBySubcategory, setProductsBySubcategory] = useState({})
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
+    const loadProductsForSubcategories = useCallback(async (subs, catSlug) => {
+        const entries = await Promise.all(
+            subs.map(async (sub) => {
+                try {
+                    const data = await getAllProductsService(catSlug, sub.slug)
+                    return [sub._id, data]
+                } catch {
+                    return [sub._id, []]
+                }
+            }),
+        )
+        return Object.fromEntries(entries)
+    }, [])
+
     useEffect(() => {
-        const fetchCategoryData = async () => {
+        const fetchData = async () => {
             try {
                 setLoading(true)
                 setError(null)
@@ -26,6 +42,14 @@ const CategoryPage = () => {
 
                 setCategory(categoryData)
                 setSubcategories(subcategoriesData)
+
+                if (subcategoriesData.length > 0) {
+                    const productsMap = await loadProductsForSubcategories(
+                        subcategoriesData,
+                        categorySlug,
+                    )
+                    setProductsBySubcategory(productsMap)
+                }
             } catch (err) {
                 setError(err.message || 'Error al cargar la categoría')
             } finally {
@@ -33,8 +57,8 @@ const CategoryPage = () => {
             }
         }
 
-        fetchCategoryData()
-    }, [categorySlug])
+        fetchData()
+    }, [categorySlug, loadProductsForSubcategories])
 
     if (loading) {
         return (
@@ -49,23 +73,90 @@ const CategoryPage = () => {
     const hasSubcategories = subcategories.length > 0
 
     return (
-        <div>
-            <h1 className="text-4xl font-bold text-center mt-7 mb-2 uppercase">
-                {category?.name}
-            </h1>
-            <p className="text-center mb-4">
-                {hasSubcategories
-                    ? 'Elegí una subcategoría'
-                    : 'Elegí tu producto'}
-            </p>
+        <div className="pb-16">
+            {/* Header de Categoría */}
+            <div className="bg-white mx-4 mt-8 mb-12 rounded-[2.5rem] p-8 md:p-14 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] border border-gray-100 flex flex-col items-center text-center max-w-5xl md:mx-auto">
+                <span className="bg-gray-100 text-gray-500 px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-4">
+                    Categoría
+                </span>
+                <h1 className="text-4xl md:text-6xl font-black text-gray-900 tracking-tight uppercase mb-4">
+                    {category?.name}
+                </h1>
+                {category?.description && (
+                    <p className="text-gray-500 text-lg md:text-xl max-w-2xl leading-relaxed">
+                        {category.description}
+                    </p>
+                )}
+                {!category?.description && (
+                    <div className="w-12 h-1 bg-gray-200 rounded-full mt-4"></div>
+                )}
+            </div>
 
-            {hasSubcategories ? (
-                <SubcategoryGrid
-                    categorySlug={categorySlug}
-                    subcategories={subcategories}
-                />
-            ) : (
+            {/* Categoría SIN subcategorías → grilla normal de productos */}
+            {!hasSubcategories && (
                 <ProductGrid categorySlug={categorySlug} />
+            )}
+
+            {/* Categoría CON subcategorías → banner por sección */}
+            {hasSubcategories && (
+                <div className="flex flex-col gap-14 px-4 max-w-7xl mx-auto">
+                    {subcategories.map((sub) => {
+                        const products = productsBySubcategory[sub._id] ?? []
+
+                        return (
+                            <section key={sub._id}>
+                                {/* Banner título subcategoría */}
+                                <div
+                                    className="
+                                        relative h-40 rounded-[20px] overflow-hidden mb-5
+                                        flex items-end
+                                        shadow-[0_8px_30px_rgba(0,0,0,0.15)]
+                                    "
+                                >
+                                    {/* Imagen de fondo */}
+                                    {sub.imageUrl ? (
+                                        <img
+                                            src={sub.imageUrl}
+                                            alt={sub.name}
+                                            className="absolute inset-0 w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="absolute inset-0 bg-base-300" />
+                                    )}
+
+                                    {/* Degradado oscuro */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+                                    {/* Nombre */}
+                                    <h2 className="relative z-10 px-6 pb-5 text-white font-serif text-2xl font-semibold tracking-tight drop-shadow">
+                                        {sub.name}
+                                    </h2>
+                                </div>
+
+                                {/* Fila de productos */}
+                                {products.length === 0 ? (
+                                    <p className="text-sm text-base-content/50 pl-2">
+                                        Sin productos en esta sección todavía.
+                                    </p>
+                                ) : (
+                                    <div className="flex gap-5 overflow-x-auto pb-3 snap-x snap-mandatory">
+                                        {products.map((product) => (
+                                            <div
+                                                key={product._id}
+                                                className="snap-start shrink-0"
+                                            >
+                                                <CardProduct
+                                                    product={product}
+                                                    categorySlug={categorySlug}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </section>
+                        )
+                    })}
+                </div>
             )}
         </div>
     )
