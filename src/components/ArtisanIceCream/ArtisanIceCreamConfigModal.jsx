@@ -1,5 +1,7 @@
 import { useMemo, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { useNavigate } from 'react-router-dom'
+import { useUser } from '../../context/userContextData.ts'
 import { toast } from 'react-hot-toast'
 import { useCart } from '../../context/cartContextData.js'
 import {
@@ -14,6 +16,8 @@ import QuantityStepper from './QuantityStepper.jsx'
 
 const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
     const { addToCart, loading } = useCart()
+    const { userInfo } = useUser()
+    const navigate = useNavigate()
     const { _id, name, price, imageUrl, description, stock } = product
 
     const maxPortions = getMaxFlavorPortions(name)
@@ -59,6 +63,12 @@ const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
     }
 
     const handleAddToCart = async () => {
+        if (!userInfo?.id) {
+            toast.error('Para añadir productos a tu carrito, debes iniciar sesión')
+            navigate('/login')
+            onClose()
+            return
+        }
         if (!isConfigurationValid) {
             toast.error(
                 `Debés completar ${maxPortions} porciones de sabor para este producto`,

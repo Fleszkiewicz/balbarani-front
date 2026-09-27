@@ -1,4 +1,5 @@
-﻿import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useUser } from './userContextData.js'
 import { CartContext } from './cartContextData.js'
 import {
@@ -39,6 +40,7 @@ export const CartContextProvider = ({ children }) => {
     const [cart, setCart] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [loading, setLoading] = useState(true)
+    const navigate = useNavigate()
 
     const { loading: userLoading, userInfo } = useUser()
     const authenticated = !!userInfo?.id
@@ -250,6 +252,11 @@ export const CartContextProvider = ({ children }) => {
     }
 
     const addToCart = async (product, quantity = 1) => {
+        if (!authenticated || !userId) {
+            toast.error('Para añadir productos a tu carrito, debes iniciar sesión')
+            navigate('/login')
+            return false
+        }
         const configuration = product.configuration || null
         const cartLineKey =
             product.cartLineKey ||

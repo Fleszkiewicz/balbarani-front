@@ -5,6 +5,8 @@ import { getCategoryBySlugService } from '../../services/categoryServices'
 import { getSubcategoriesByCategoryService } from '../../services/subcategoryServices'
 import { getAllProductsService, deleteProductService } from '../../services/productServices'
 import ProductFormModal from './ProductFormModal.jsx'
+import { FiEdit2 } from "react-icons/fi";
+import { FiTrash } from "react-icons/fi";
 
 const AdminSubcategoryDetail = () => {
     const { categorySlug, subcategorySlug } = useParams()
@@ -74,7 +76,7 @@ const AdminSubcategoryDetail = () => {
                 <h1 className="text-3xl font-bold">{subcategory?.name}</h1>
                 <button
                     type="button"
-                    className="rounded-full bg-neutral px-6 py-2.5 text-sm font-semibold text-neutral-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+                    className="rounded-full bg-black px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
                     onClick={() => setIsCreateOpen(true)}
                 >
                     + Añadir producto
@@ -124,14 +126,14 @@ const AdminSubcategoryDetail = () => {
                                             className="btn btn-sm btn-ghost"
                                             onClick={() => setEditingProduct(product)}
                                         >
-                                            ✏️
+                                            <FiEdit2 size={18} />
                                         </button>
                                         <button
                                             type="button"
                                             className="btn btn-sm btn-ghost"
                                             onClick={() => setDeletingProduct(product)}
                                         >
-                                            🗑️
+                                            <FiTrash size={18} />
                                         </button>
                                     </td>
                                 </tr>

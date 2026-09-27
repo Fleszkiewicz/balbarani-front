@@ -75,21 +75,34 @@ const CategoryPage = () => {
     return (
         <div className="pb-16">
             {/* Header de Categoría */}
-            <div className="bg-white mx-4 mt-8 mb-12 rounded-[2.5rem] p-8 md:p-14 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] border border-gray-100 flex flex-col items-center text-center max-w-5xl md:mx-auto">
-                <span className="bg-gray-100 text-gray-500 px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-4">
-                    Categoría
-                </span>
-                <h1 className="text-4xl md:text-6xl font-black text-gray-900 tracking-tight uppercase mb-4">
-                    {category?.name}
-                </h1>
-                {category?.description && (
-                    <p className="text-gray-500 text-lg md:text-xl max-w-2xl leading-relaxed">
-                        {category.description}
-                    </p>
+            <div className={`relative mx-4 mt-8 mb-12 rounded-[2.5rem] overflow-hidden p-8 md:p-16 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] flex flex-col items-center text-center max-w-5xl md:mx-auto ${!category?.imageUrl ? 'bg-white border border-gray-100' : ''}`}>
+                {category?.imageUrl && (
+                    <>
+                        <img
+                            src={category.imageUrl}
+                            alt={category.name}
+                            className="absolute inset-0 w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/40"></div>
+                    </>
                 )}
-                {!category?.description && (
-                    <div className="w-12 h-1 bg-gray-200 rounded-full mt-4"></div>
-                )}
+
+                <div className={`relative z-10 flex flex-col items-center ${category?.imageUrl ? 'text-white' : 'text-gray-900'}`}>
+                    <span className={`px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-4 ${category?.imageUrl ? 'bg-white/20 text-white backdrop-blur-md' : 'bg-gray-100 text-gray-500'}`}>
+                        Categoría
+                    </span>
+                    <h1 className="text-4xl md:text-6xl font-black tracking-tight uppercase mb-4 drop-shadow-lg">
+                        {category?.name}
+                    </h1>
+                    {category?.description && (
+                        <p className={`text-lg md:text-xl max-w-2xl leading-relaxed drop-shadow-md ${category?.imageUrl ? 'text-gray-200' : 'text-gray-500'}`}>
+                            {category.description}
+                        </p>
+                    )}
+                    {!category?.description && (
+                        <div className={`w-12 h-1 rounded-full mt-4 ${category?.imageUrl ? 'bg-white/30' : 'bg-gray-200'}`}></div>
+                    )}
+                </div>
             </div>
 
             {/* Categoría SIN subcategorías → grilla normal de productos */}
@@ -105,33 +118,13 @@ const CategoryPage = () => {
 
                         return (
                             <section key={sub._id}>
-                                {/* Banner título subcategoría */}
-                                <div
-                                    className="
-                                        relative h-40 rounded-[20px] overflow-hidden mb-5
-                                        flex items-end
-                                        shadow-[0_8px_30px_rgba(0,0,0,0.15)]
-                                    "
-                                >
-                                    {/* Imagen de fondo */}
-                                    {sub.imageUrl ? (
-                                        <img
-                                            src={sub.imageUrl}
-                                            alt={sub.name}
-                                            className="absolute inset-0 w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="absolute inset-0 bg-base-300" />
-                                    )}
 
-                                    {/* Degradado oscuro */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                                {/* Nombre */}
+                                <div className="flex items-center gap-3 mb-3 border-b pb-2">
+                                    <h2 className="text-2xl font-semibold flex-1">{sub.name}</h2>
 
-                                    {/* Nombre */}
-                                    <h2 className="relative z-10 px-6 pb-5 text-white font-serif text-2xl font-semibold tracking-tight drop-shadow">
-                                        {sub.name}
-                                    </h2>
                                 </div>
+
 
                                 {/* Fila de productos */}
                                 {products.length === 0 ? (

@@ -3,8 +3,9 @@ import { useForm, type SubmitHandler } from 'react-hook-form'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import { loginService } from '../../services/authServices'
 import { useUser } from '../../context/userContextData'
-import { Navigate } from 'react-router-dom'
+import { Navigate, Link } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
+
 
 type LoginFormValues = {
     email: string
@@ -96,11 +97,10 @@ const LoginForm = () => {
                             message: 'Máximo 254 caracteres',
                         },
                     })}
-                    className={`${inputClass} ${
-                        errors.email
-                            ? 'border-red-500 focus:ring-red-500/10'
-                            : 'border-base-content/10'
-                    }
+                    className={`${inputClass} ${errors.email
+                        ? 'border-red-500 focus:ring-red-500/10'
+                        : 'border-base-content/10'
+                        }
 `}
                     autoComplete="email"
                     name="email"
@@ -131,11 +131,10 @@ const LoginForm = () => {
                                 message: 'Máximo 254 caracteres',
                             },
                         })}
-                        className={`${inputClass}${
-                            errors.password
-                                ? 'border-red-500 focus:ring-red-500/10'
-                                : 'border-base-content/10'
-                        }
+                        className={`${inputClass}${errors.password
+                            ? 'border-red-500 focus:ring-red-500/10'
+                            : 'border-base-content/10'
+                            }
 `}
                         autoComplete="current-password"
                         name="password"
@@ -175,6 +174,16 @@ const LoginForm = () => {
                     </p>
                 )}
             </div>
+            {/* Link ¿Olvidaste tu contraseña? */}
+            <div className="flex justify-center -mt-2">
+                <Link
+                    to="forgot-password"
+                    className="text-xs text-gray-500 hover:text-neutral hover:underline transition-colors"
+                >
+                    ¿Olvidaste tu contraseña?
+                </Link>
+            </div>
+
             <button
                 type="submit"
                 className="

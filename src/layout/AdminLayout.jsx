@@ -18,17 +18,13 @@ const AdminLayout = () => {
     }
 
     return (
-        <div className="min-h-screen bg-base-200">
-            <header className="navbar sticky top-0 z-50 mx-auto w-full px-6 py-3 bg-base-100/80 backdrop-blur-xl border-b border-base-300/50">
+        // ✅ Cambiamos bg-base-200 por bg-gray-100 para que todo el fondo sea gris claro
+        <div className="min-h-screen bg-gray-100">
+            {/* Cabecera blanca con borde sutil para que contraste con el fondo gris */}
+            <header className="navbar sticky top-0 z-50 mx-auto w-full px-6 py-3 bg-white/90 backdrop-blur-xl border-b border-gray-200">
                 <div className="flex-1">
-                    <Link to="/admin/dashboard" className="text-3xl
-        font-semibold
-        tracking-tight
-        hover:opacity-80
-        transition-opacity">
-                        Balbarani <span className="text-lg font-normal">
-                            ADMIN
-                        </span>
+                    <Link to="/admin/dashboard" className="text-3xl font-semibold tracking-tight hover:opacity-80 transition-opacity">
+                        Balbarani <span className="text-lg font-normal text-gray-500">ADMIN</span>
                     </Link>
                 </div>
                 <nav className="hidden md:flex gap-2">
@@ -36,7 +32,9 @@ const AdminLayout = () => {
                         <Link
                             key={path}
                             to={path}
-                            className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300 ${isActive(path) ? 'bg-neutral text-neutral-content shadow-sm' : 'text-gray-600 hover:bg-gray-100'
+                            className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300 ${isActive(path)
+                                    ? 'bg-neutral text-white shadow-sm'
+                                    : 'text-gray-600 hover:bg-gray-100'
                                 }`}
                         >
                             {label}
@@ -49,12 +47,14 @@ const AdminLayout = () => {
             </header>
 
             {/* Menú mobile */}
-            <div className="md:hidden flex flex-wrap gap-2 p-4 bg-base-100/80 backdrop-blur-xl border-b border-base-300/50 sticky top-[76px] z-40">
+            <div className="md:hidden flex flex-wrap gap-2 p-4 bg-white/90 backdrop-blur-xl border-b border-gray-200 sticky top-[76px] z-40">
                 {NAV_ITEMS.map(({ label, path }) => (
                     <Link
                         key={path}
                         to={path}
-                        className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 ${isActive(path) ? 'bg-neutral text-neutral-content shadow-sm' : 'text-gray-600 hover:bg-gray-100'
+                        className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 ${isActive(path)
+                                ? 'bg-neutral text-white shadow-sm'
+                                : 'text-gray-600 hover:bg-gray-100'
                             }`}
                     >
                         {label}

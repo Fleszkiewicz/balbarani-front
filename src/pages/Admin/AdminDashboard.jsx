@@ -8,6 +8,7 @@ import TableProductDashboard from '../../components/AdminDashboard/TableProductD
 import AdminCatalog from './AdminCatalog.jsx'
 import AdminCategoryDetail from './AdminCategoryDetail.jsx'
 import AdminSubcategoryDetail from './AdminSubcategoryDetail.jsx'
+import AdminOrders from './AdminOrders.jsx'
 
 const AdminDashboard = () => {
     return (
@@ -43,12 +44,7 @@ const AdminDashboard = () => {
                     />
                     <Route
                         path="pedidos"
-                        element={
-                            <AdminPlaceholder
-                                title="Pedidos"
-                                description="Acá vas a ver el listado y el detalle de pedidos."
-                            />
-                        }
+                        element={<AdminOrders />}
                     />
                     <Route
                         path="products"

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import CardProduct from '../CardProduct/CardProduct.jsx'
 import { getAllProductsService } from '../../services/productServices'
+import { Spinner, EmptyState } from '../ui'
 
 const ProductGrid = ({ categorySlug, subcategorySlug }) => {
     const [products, setProducts] = useState([])
@@ -29,7 +30,9 @@ const ProductGrid = ({ categorySlug, subcategorySlug }) => {
 
     if (loading) {
         return (
-            <div className="loading loading-spinner mx-auto block mt-10"></div>
+            <div className="flex justify-center items-center py-20">
+                <Spinner size="lg" />
+            </div>
         )
     }
 
@@ -39,9 +42,12 @@ const ProductGrid = ({ categorySlug, subcategorySlug }) => {
 
     if (products.length === 0) {
         return (
-            <p className="text-center mt-10">
-                No hay productos en esta sección todavía.
-            </p>
+            <div className="max-w-md mx-auto py-12">
+                <EmptyState
+                    title="No hay productos disponibles"
+                    description="No se encontraron productos en esta sección todavía."
+                />
+            </div>
         )
     }
 

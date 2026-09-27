@@ -12,6 +12,11 @@ import AdminDashboard from './pages/Admin/AdminDashboard.jsx'
 import CategoryPage from './pages/CategoryPage.jsx'
 import SubcategoryPage from './pages/SubcategoryPage.jsx'
 import AdminRoute from './components/Admin/AdminRoute.jsx'
+import CheckoutPage from './pages/CheckoutPage.jsx'
+import ForgotPassword from './pages/ForgotPassword.jsx'
+import Contacto from './pages/Contacto.jsx'
+import Nosotros from './pages/Nosotros.jsx'
+import Franquicias from './pages/Franquicias.jsx'
 
 function App() {
     return (
@@ -23,6 +28,10 @@ function App() {
                             <Route path="/" element={<Home />} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/login" element={<Login />} />
+                            <Route path="/forgot-password" element={<ForgotPassword />} />
+                            <Route path="/contacto" element={<Contacto />} />
+                            <Route path="/nosotros" element={<Nosotros />} />
+                            <Route path="/franquicias" element={<Franquicias />} />
                             <Route
                                 path="/detailProduct/:id"
                                 element={<DetailProduct />}
@@ -34,6 +43,10 @@ function App() {
                             <Route
                                 path="/categoria/:categorySlug/:subcategorySlug"
                                 element={<SubcategoryPage />}
+                            />
+                            <Route
+                                path="/checkout"
+                                element={<CheckoutPage />}
                             />
                         </Route>
 

@@ -96,8 +96,7 @@ const CategoryGrid = () => {
                     >
                         <h2
                             className="
-                                font-serif
-                                text-3xl
+                                text-4xl
                                 font-semibold
                                 tracking-tight
                                 text-white

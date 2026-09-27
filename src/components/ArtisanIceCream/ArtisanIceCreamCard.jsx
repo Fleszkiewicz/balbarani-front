@@ -1,10 +1,23 @@
 import { useState } from 'react'
-import { FaPlus } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
+import { useUser } from '../../context/userContextData.ts'
+import toast from 'react-hot-toast'
 import ArtisanIceCreamConfigModal from './ArtisanIceCreamConfigModal.jsx'
 
 const ArtisanIceCreamCard = ({ product, categorySlug }) => {
-    const { name, price, imageUrl, description } = product
+    const { name, price, imageUrl } = product
     const [isConfigOpen, setIsConfigOpen] = useState(false)
+    const { userInfo } = useUser()
+    const navigate = useNavigate()
+
+    const handleOpenConfig = () => {
+        if (!userInfo?.id) {
+            toast.error('Para añadir productos a tu carrito, debes iniciar sesión')
+            navigate('/login')
+            return
+        }
+        setIsConfigOpen(true)
+    }
 
     return (
         <>
@@ -16,7 +29,7 @@ const ArtisanIceCreamCard = ({ product, categorySlug }) => {
                         alt={name}
                     />
                 </div>
-                
+
                 <div className="px-1 flex flex-col flex-1 gap-1 pb-1">
                     <p className="font-bold text-sm leading-tight text-gray-900 line-clamp-2">
                         {name}
@@ -29,12 +42,12 @@ const ArtisanIceCreamCard = ({ product, categorySlug }) => {
                             Artesanal
                         </span>
                     </div>
-                    
+
                     <div className="flex-1"></div>
 
                     <button
-                        onClick={() => setIsConfigOpen(true)}
-                        className="h-8 w-full rounded-full bg-[#4a3f35] hover:bg-[#362e26] text-white transition-colors mt-2 text-xs font-semibold flex items-center justify-center"
+                        onClick={handleOpenConfig}
+                        className="h-8 w-full rounded-full bg-[#4a3f35] hover:bg-[#362e26] text-white transition-colors mt-2 text-xs font-semibold flex items-center justify-center cursor-pointer"
                     >
                         Añadir
                     </button>

@@ -1,9 +1,11 @@
-import { Link } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import { FaShoppingCart } from 'react-icons/fa'
 import { useCart } from '../../context/cartContextData.js'
+import { useUser } from '../../context/userContextData.ts'
 import { getProductCardType } from '../../utils/artisanIceCream.js'
 import { PRODUCT_CARD_TYPES } from '../../constants/categories.js'
 import ArtisanIceCreamCard from '../ArtisanIceCream/ArtisanIceCreamCard.jsx'
+import toast from 'react-hot-toast'
 
 const CardProduct = ({ product, categorySlug }) => {
     const cardType = getProductCardType(product, categorySlug)
@@ -29,15 +31,22 @@ const DefaultProductCard = ({ product }) => {
         description,
         stock,
         inventoryType,
-        flavors = [],
     } = product
 
-    const { addToCart, loading, openModal } = useCart()
+    const { addToCart, loading } = useCart()
+    const { userInfo } = useUser()
+    const navigate = useNavigate()
 
     const isFlavorProduct = inventoryType === 'flavor'
     const isAddDisabled = loading || (!isFlavorProduct && stock === 0)
 
     const handleAddToCart = async () => {
+        if (!userInfo?.id) {
+            toast.error('Para añadir productos a tu carrito, debes iniciar sesión')
+            navigate('/login')
+            return
+        }
+
         await addToCart({
             _id,
             name,
@@ -47,7 +56,6 @@ const DefaultProductCard = ({ product }) => {
             stock,
             inventoryType,
         })
-        openModal()
     }
 
     return (
@@ -78,7 +86,7 @@ const DefaultProductCard = ({ product }) => {
                 <button
                     onClick={handleAddToCart}
                     disabled={isAddDisabled}
-                    className="h-8 w-full rounded-full bg-[#4a3f35] hover:bg-[#362e26] text-white transition-colors mt-2 text-xs font-semibold flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="h-8 w-full rounded-full bg-[#4a3f35] hover:bg-[#362e26] text-white transition-colors mt-2 text-xs font-semibold flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                     {stock === 0 && !isFlavorProduct ? 'Sin Stock' : 'Añadir'}
                 </button>

@@ -10,6 +10,9 @@ import { getAllProductsService, deleteProductService } from '../../services/prod
 import { CATEGORY_SLUGS } from '../../constants/categories.js'
 import SubcategoryFormModal from './SubcategoryFromModal.jsx'
 import ProductFormModal from './ProductFormModal.jsx'
+import { FiEdit2 } from "react-icons/fi";
+import { FiTrash } from "react-icons/fi";
+import { FiPlus } from "react-icons/fi";
 
 const AdminCategoryDetail = () => {
     const { categorySlug } = useParams()
@@ -153,13 +156,16 @@ const AdminCategoryDetail = () => {
 
             {/* Header */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-                <h1 className="text-3xl font-bold">{category?.name}</h1>
+                <h1 className="text-4xl font-bold">{category?.name}</h1>
                 <button
                     type="button"
-                    className="rounded-full border border-gray-200 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:bg-gray-50"
+                    className="rounded-full bg-neutral px-4 py-2.5 text-sm font-semibold text-neutral-content shadow-sm transition-all hover:-translate-y-0.5 "
                     onClick={() => setIsCreateSubcategoryOpen(true)}
                 >
-                    + Añadir subcategoría
+                    <div className="flex items-center gap-1">
+                        <FiPlus size={16} strokeWidth={3} />
+                        Añadir Subcategoría
+                    </div>
                 </button>
             </div>
 
@@ -167,7 +173,7 @@ const AdminCategoryDetail = () => {
             <div className="flex flex-col gap-10">
                 {subcategories.length === 0 && (
                     <p className="text-center text-base-content/60">
-                        Esta categoría no tiene subcategorías todavía.
+                        Esta categoría no tiene Subcategorías todavía.
                     </p>
                 )}
 
@@ -177,29 +183,32 @@ const AdminCategoryDetail = () => {
                         <section key={sub._id}>
                             {/* Título de subcategoría */}
                             <div className="flex items-center gap-3 mb-3 border-b pb-2">
-                                <h2 className="text-xl font-semibold flex-1">{sub.name}</h2>
+                                <h2 className="text-2xl font-semibold flex-1">{sub.name}</h2>
                                 <button
                                     type="button"
-                                    className="btn btn-xs btn-ghost"
+                                    className="w-8 h-8 rounded-full bg-blue-100 text-blue-500 hover:bg-blue-200 flex items-center justify-center transition-colors"
                                     onClick={() => setEditingSubcategory(sub)}
                                     aria-label={`Editar ${sub.name}`}
                                 >
-                                    ✏️
+                                    <FiEdit2 size={16} />
                                 </button>
                                 <button
                                     type="button"
-                                    className="btn btn-xs btn-ghost"
+                                    className="w-8 h-8 rounded-full bg-red-100 text-red-500 hover:bg-red-200 flex items-center justify-center transition-colors "
                                     onClick={() => setDeletingSubcategory(sub)}
                                     aria-label={`Eliminar ${sub.name}`}
                                 >
-                                    🗑️
+                                    <FiTrash size={16} />
                                 </button>
                                 <button
                                     type="button"
-                                    className="rounded-full bg-neutral px-4 py-1.5 text-xs font-semibold text-neutral-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+                                    className="rounded-full bg-gray-200 px-3 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-300 transition-colors"
                                     onClick={() => setCreateProductFor(sub)}
                                 >
-                                    + Producto
+                                    <div className="flex items-center gap-1">
+                                        <FiPlus strokeWidth={3} />
+                                        Añadir Producto
+                                    </div>
                                 </button>
                             </div>
 
@@ -230,40 +239,40 @@ const AdminCategoryDetail = () => {
                                                 <p className="font-bold text-sm leading-tight text-gray-900 line-clamp-2">
                                                     {product.name}
                                                 </p>
-                                                <div className="flex justify-between items-center mt-1">
-                                                    <span className="bg-[#4a3f35] text-white px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap">
-                                                        ${product.price}
-                                                    </span>
-                                                    <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                                                        {product.inventoryType === 'stock'
-                                                            ? `Stk: ${product.stock}`
-                                                            : `${product.flavors?.length ?? 0} sab.`}
-                                                    </span>
-                                                </div>
+                                                <p className="text-xs text-gray-500">
+                                                    {product.description}
+                                                </p>
                                                 <div className="flex-1"></div>
-                                                
-                                                <div className="flex gap-2 mt-2">
-                                                    <button
-                                                        type="button"
-                                                        className="h-8 flex-1 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center transition-colors text-xs font-medium"
-                                                        onClick={() =>
-                                                            setEditingProduct({ product, subcategory: sub })
-                                                        }
-                                                    >
-                                                        Editar
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center transition-colors shrink-0"
-                                                        onClick={() =>
-                                                            setDeletingProduct({
-                                                                product,
-                                                                subcategoryId: sub._id,
-                                                            })
-                                                        }
-                                                    >
-                                                        🗑️
-                                                    </button>
+
+                                                <div className="flex gap-3 justify-between">
+                                                    <div className='flex items-center'>
+                                                        <span className="bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap">
+                                                            ${product.price}
+                                                        </span>
+                                                    </div>
+                                                    <div className='justify-end flex gap-2'>
+                                                        <button
+                                                            type="button"
+                                                            className="w-8 h-8 rounded-full bg-blue-100 text-blue-500 hover:bg-blue-200 flex items-center justify-center transition-colors"
+                                                            onClick={() =>
+                                                                setEditingProduct({ product, subcategory: sub })
+                                                            }
+                                                        >
+                                                            <FiEdit2 size={16} />
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className="w-8 h-8 rounded-full bg-red-100 text-red-500 hover:bg-red-200 flex items-center justify-center transition-colors"
+                                                            onClick={() =>
+                                                                setDeletingProduct({
+                                                                    product,
+                                                                    subcategoryId: sub._id,
+                                                                })
+                                                            }
+                                                        >
+                                                            <FiTrash size={16} />
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

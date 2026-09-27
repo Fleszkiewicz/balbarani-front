@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { getAllCategoriesService, deleteCategoryService } from '../../services/categoryServices'
 import CategoryFormModal from './CategoryFormModal.jsx'
+import { FiEdit2 } from "react-icons/fi";
+import { FiTrash } from "react-icons/fi";
 
 const AdminCatalog = () => {
     const [categories, setCategories] = useState([])
@@ -59,7 +61,7 @@ const AdminCatalog = () => {
                 <h1 className="text-3xl font-bold">Catálogo</h1>
                 <button
                     type="button"
-                    className="rounded-full bg-neutral px-6 py-2.5 text-sm font-semibold text-neutral-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+                    className="rounded-full bg-neutral px-4 py-1.5 text-sm font-semibold text-neutral-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
                     onClick={() => setIsCreateOpen(true)}
                 >
                     + Añadir categoría
@@ -84,33 +86,33 @@ const AdminCatalog = () => {
                             {category.description && (
                                 <p className="text-sm text-gray-500 line-clamp-2">{category.description}</p>
                             )}
-                            
+
                             <div className="flex-1"></div>
-                            
+
                             <div className="flex justify-between items-center mt-2">
                                 <div className="flex gap-2">
                                     <button
                                         type="button"
-                                        className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                                        className="w-10 h-10 rounded-full bg-blue-100 text-blue-500 hover:bg-blue-200 flex items-center justify-center transition-colors"
                                         aria-label={`Editar ${category.name}`}
                                         onClick={() => setEditingCategory(category)}
                                     >
-                                        ✏️
+                                        <FiEdit2 size={18} />
                                     </button>
                                     <button
                                         type="button"
-                                        className="w-10 h-10 rounded-full bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center transition-colors"
+                                        className="w-10 h-10 rounded-full bg-red-100 text-red-500 hover:bg-red-200 flex items-center justify-center transition-colors"
                                         aria-label={`Eliminar ${category.name}`}
                                         onClick={() => setDeletingCategory(category)}
                                     >
-                                        🗑️
+                                        <FiTrash size={18} />
                                     </button>
                                 </div>
                                 <Link
                                     to={`/admin/dashboard/catalogo/${category.slug}`}
-                                    className="px-6 py-2 rounded-full bg-[#4a3f35] text-white font-medium hover:bg-[#362e26] transition-colors"
+                                    className="px-4 py-2.5 rounded-full bg-black text-white font-medium transition-colors text-sm"
                                 >
-                                    Ver
+                                    Ver más
                                 </Link>
                             </div>
                         </div>

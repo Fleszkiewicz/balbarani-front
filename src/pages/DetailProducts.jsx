@@ -5,12 +5,15 @@ import { useProduct } from '../context/productContextData.js'
 import { useCart } from '../context/cartContextData.js'
 import { isArtisanIceCreamProduct } from '../utils/artisanIceCream.js'
 import { CATEGORY_SLUGS } from '../constants/categories.js'
+import { useUser } from '../context/userContextData.ts'
+import toast from 'react-hot-toast'
 
 const DetailProduct = () => {
     const { id } = useParams()
     const navigate = useNavigate()
     const { getProductById, product, productLoading } = useProduct()
     const { addToCart, loading, openModal } = useCart()
+    const { userInfo } = useUser()
 
     useEffect(() => {
         getProductById(id)
@@ -28,6 +31,12 @@ const DetailProduct = () => {
     }, [product, productLoading, navigate])
 
     const handleAddToCart = async () => {
+        if (!userInfo?.id) {
+            toast.error('Para añadir productos a tu carrito, debes iniciar sesión')
+            navigate('/login')
+            return
+        }
+
         await addToCart(product)
         openModal()
     }

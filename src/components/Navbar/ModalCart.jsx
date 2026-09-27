@@ -1,12 +1,14 @@
-import { CgTrash } from 'react-icons/cg'
+import { FiTrash } from "react-icons/fi";
 import { FaMinus, FaPlus } from 'react-icons/fa'
 import { useCart } from '../../context/cartContextData.js'
+import { Spinner, EmptyState } from '../ui'
 import { Link } from 'react-router-dom'
 import { createPortal } from 'react-dom'
 import {
     formatExtrasSummary,
     formatFlavorSummary,
 } from '../../utils/artisanIceCream.js'
+
 
 const ModalCart = () => {
     const {
@@ -107,12 +109,12 @@ const ModalCart = () => {
                                                 <button
                                                     onClick={() => removeFromCart(item.cartLineKey)}
                                                     disabled={loading}
-                                                    className="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition-colors shrink-0"
+                                                    className="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-200 transition-colors shrink-0"
                                                 >
-                                                    <CgTrash size={16} />
+                                                    <FiTrash size={16} />
                                                 </button>
                                             </div>
-                                            
+
                                             <div className="flex justify-between items-end">
                                                 <div className="flex items-center bg-gray-50 rounded-full border border-gray-200">
                                                     <button
@@ -160,7 +162,7 @@ const ModalCart = () => {
                                     }
                                 }}
                                 disabled={loading}
-                                className="px-6 h-12 rounded-full font-semibold text-red-500 hover:bg-red-50 transition-colors flex-1 sm:flex-none border border-red-100 bg-white"
+                                className="px-6 h-12 rounded-full font-semibold text-red-500 hover:bg-red-200 transition-colors flex-1 sm:flex-none bg-red-100"
                             >
                                 Vaciar
                             </button>

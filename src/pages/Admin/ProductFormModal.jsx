@@ -144,17 +144,23 @@ const ProductFormModal = ({
                             placeholder="Descripción"
                         />
                     </div>
-                    <div>
+
+                    <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 z-10 font-medium text-gray-700">
+                            $
+                        </span>
+
                         <input
                             name="price"
                             value={form.price}
                             onChange={handleChange}
-                            className={inputClass}
-                            placeholder="Precio"
+                            className={`${inputClass} pl-8`}
+                            placeholder="0"
                             type="number"
                             min="0"
                         />
                     </div>
+
                     <div>
                         <input
                             name="imageUrl"

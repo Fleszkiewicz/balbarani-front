@@ -2,13 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-:root:has(
-    :is(
-        .modal-open,
+/* 
+ * Forzar fondo gris claro (Tailwind gray-100: #f3f4f6) en TODA la web.
+ * Anula la regla html[data-theme] de DaisyUI para que nunca vuelva a quedar blanca.
+ */
+html,
+html[data-theme],
+body,
+#root {
+    background-color: #f3f4f6 !important;
+    min-height: 100vh;
+}
+
+:root:has( :is(.modal-open,
         .modal:target,
         .modal-toggle:checked + .modal,
-        .modal[open]
-    )
-) {
+        .modal[open])) {
     scrollbar-gutter: auto;
 }
