@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import AdminLayout from '../../layout/AdminLayout.jsx'
 import AdminPlaceholder from '../Admin/AdminPlaceholder.jsx'
 import AdminInventory from './AdminInventory.jsx'
@@ -15,8 +15,15 @@ const AdminDashboard = () => {
         <section>
             <Routes>
                 <Route element={<AdminLayout />}>
+                    {/* Redirección predeterminada a Pedidos */}
                     <Route
                         index
+                        element={<Navigate to="pedidos" replace />}
+                    />
+
+                    {/* Ruta de Dashboard conservada para cuando se reactive */}
+                    <Route
+                        path="dashboard"
                         element={
                             <AdminPlaceholder
                                 title="Dashboard"
@@ -24,6 +31,7 @@ const AdminDashboard = () => {
                             />
                         }
                     />
+
                     <Route
                         path="catalogo"
                         element={<AdminCatalog />}
@@ -36,8 +44,6 @@ const AdminDashboard = () => {
                         path="catalogo/:categorySlug/:subcategorySlug"
                         element={<AdminSubcategoryDetail />}
                     />
-
-
                     <Route
                         path="inventario"
                         element={<AdminInventory />}

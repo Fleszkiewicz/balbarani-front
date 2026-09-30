@@ -1,11 +1,13 @@
 import { FiUser } from 'react-icons/fi'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useUser } from '../../context/userContextData'
 import toast from 'react-hot-toast'
 import { logoutService } from '../../services/authServices'
 
 const UserDropDown = () => {
     const { userInfo, setUserInfo, isAdmin } = useUser()
+    const location = useLocation()
+    const isInAdmin = location.pathname.startsWith('/admin')
 
     const handleLogout = async () => {
         try {
@@ -17,6 +19,7 @@ const UserDropDown = () => {
             toast.error('Error al cerrar sesión')
         }
     }
+
     return (
         <div className="dropdown dropdown-end">
             <div
@@ -24,10 +27,9 @@ const UserDropDown = () => {
                 role="button"
                 className="transition-transform hover:scale-105 active:scale-95"
             >
-                <div className="w-11 h-11 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-700 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                <div className="w-11 h-11 rounded-full flex items-center justify-center text-white hover:text-pink-400 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
                     <FiUser size={20} strokeWidth={2.5} />
                 </div>
-
             </div>
             <ul
                 tabIndex={0}
@@ -50,15 +52,24 @@ const UserDropDown = () => {
                     </div>
                 </li>
 
-
+                {/* Botón dinámico: si está en admin va a Tienda, si está en la tienda va a Admin */}
                 {isAdmin() && (
                     <li>
-                        <Link
-                            to="/admin/dashboard"
-                            className="rounded-xl hover:bg-gray-100 bg-gray-50 text-gray-700 font-medium py-2.5"
-                        >
-                            Panel de Administración
-                        </Link>
+                        {isInAdmin ? (
+                            <Link
+                                to="/"
+                                className="rounded-xl hover:bg-gray-100 bg-gray-50 text-gray-700 font-medium py-2.5"
+                            >
+                                Tienda online
+                            </Link>
+                        ) : (
+                            <Link
+                                to="/admin/dashboard"
+                                className="rounded-xl hover:bg-gray-100 bg-gray-50 text-gray-700 font-medium py-2.5"
+                            >
+                                Panel de Administración
+                            </Link>
+                        )}
                     </li>
                 )}
 

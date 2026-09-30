@@ -337,7 +337,7 @@ const AdminOrders = () => {
                             disabled={isUpdating}
                             className="btn btn-xs flex-1 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-600 font-normal border-none gap-1 shadow-xs"
                         >
-                            {isUpdating ? <span className="loading loading-spinner loading-xs"></span> : <> Enviar pedido</>}
+                            {isUpdating ? <span className="loading loading-spinner loading-xs"></span> : <> Imprimir y enviar pedido</>}
                         </button>
                     )}
 

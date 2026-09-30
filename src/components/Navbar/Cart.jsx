@@ -22,7 +22,7 @@ const Cart = () => {
                         className="transition-transform hover:scale-105 active:scale-95"
                     >
                         <div className="indicator relative">
-                            <div className="w-11 h-11 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-700 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                            <div className="w-11 h-11 rounded-full  flex items-center justify-center text-white shadow-sm hover:shadow-md transition-shadow cursor-pointer hover:text-pink-400">
                                 <FiShoppingCart size={20} strokeWidth={2.5} />
                             </div>
                             {itemsQuantity > 0 && (
