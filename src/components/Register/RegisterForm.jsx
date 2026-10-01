@@ -122,7 +122,7 @@ const RegisterForm = () => {
     // --- PANTALLA 2: INGRESAR CÓDIGO ---
     if (step === 'verify') {
         return (
-            <div className="mx-auto mt-8 max-w-md rounded-[28px] border border-base-content/10 bg-base-100/70 p-8 shadow-[0_10px_35px_rgba(0,0,0,0.08)] backdrop-blur-sm text-center">
+            <div className="mx-auto mt-8 max-w-md rounded-[28px] border border-base-content/10 bg-base-100/70 p-8 shadow-[0_10px_35px_rgba(0,0,0,0.08)] backdrop-blur-sm text-center mb-20">
                 <div className="w-16 h-16 rounded-full bg-primary/10 text-primary mx-auto flex items-center justify-center mb-4 text-2xl">
                     <FaEnvelopeOpenText />
                 </div>
@@ -175,7 +175,7 @@ const RegisterForm = () => {
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className="mx-auto mt-8 flex max-w-md flex-col gap-5 rounded-[28px] border border-base-content/10 bg-base-100/70 p-8 shadow-[0_10px_35px_rgba(0,0,0,0.08)] backdrop-blur-sm"
+            className="mx-auto mt-8 mb-20 flex max-w-md flex-col gap-5 rounded-[28px] border border-base-content/10 bg-base-100/70 p-8 shadow-[0_10px_35px_rgba(0,0,0,0.08)] backdrop-blur-sm"
         >
             <div>
                 <input

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { FaShoppingCart } from 'react-icons/fa'
+import { FiPlus } from 'react-icons/fi'
 import { useCart } from '../../context/cartContextData.js'
 import { useUser } from '../../context/userContextData.ts'
 import { getProductCardType } from '../../utils/artisanIceCream.js'
@@ -10,6 +10,7 @@ import toast from 'react-hot-toast'
 const CardProduct = ({ product, categorySlug }) => {
     const cardType = getProductCardType(product, categorySlug)
 
+    // Si es producto de helado artesanal, renderiza su tarjeta con modal de sabores
     if (cardType === PRODUCT_CARD_TYPES.ARTISAN_ICE_CREAM) {
         return (
             <ArtisanIceCreamCard
@@ -59,7 +60,8 @@ const DefaultProductCard = ({ product }) => {
     }
 
     return (
-        <div className="bg-white w-48 min-w-48 shrink-0 shadow-sm rounded-[1.5rem] p-2 flex flex-col gap-2 transition-transform hover:scale-[1.02] border border-gray-100">
+        <div className="bg-white w-48 min-w-48 shrink-0 shadow-sm rounded-[1.5rem] p-2.5 flex flex-col gap-2 transition-transform hover:scale-[1.02] border border-gray-100">
+            {/* Imagen del producto */}
             <div className="relative w-full aspect-square rounded-[1rem] overflow-hidden bg-gray-50">
                 <img
                     className="w-full h-full object-cover"
@@ -68,28 +70,44 @@ const DefaultProductCard = ({ product }) => {
                 />
             </div>
 
-            <div className="px-1 flex flex-col flex-1 gap-1 pb-1">
-                <p className="font-bold text-sm leading-tight text-gray-900 line-clamp-2">
+            {/* Contenido: Nombre + Descripción */}
+            <div className="px-1 flex flex-col flex-1 pb-1">
+                <p className="font-bold text-sm leading-tight text-gray-900 line-clamp-1" title={name}>
                     {name}
                 </p>
-                <p className="text-xs font-medium text-gray-400 line-clamp-3">
-                    {description}
-                </p>
-                <div className="flex justify-between items-center mt-1">
-                    <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap">
-                        ${price}
-                    </span>
+                {description && (
+                    <p className="text-xs font-medium text-gray-400 line-clamp-2 mt-0.5">
+                        {description}
+                    </p>
+                )}
+
+                {/* Espaciador flexible para empujar el precio y botón al fondo */}
+                <div className="flex-1 min-h-3"></div>
+
+                {/* Fila inferior: Precio a la izquierda y Botón Redondo (+) a la derecha */}
+                <div className="flex justify-between items-center pt-2">
+                    <div className="flex flex-col">
+                        <span className="font-black text-base text-gray-900 tracking-tight">
+                            ${price}
+                        </span>
+                        {stock === 0 && !isFlavorProduct && (
+                            <span className="text-[10px] font-bold text-red-500 leading-none">
+                                Sin stock
+                            </span>
+                        )}
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={handleAddToCart}
+                        disabled={isAddDisabled}
+                        className="w-8 h-8 rounded-full bg-neutral text-white hover:bg-neutral-800 flex items-center justify-center transition-all shadow-xs hover:shadow-md active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shrink-0"
+                        title={stock === 0 && !isFlavorProduct ? 'Sin stock' : 'Añadir al carrito'}
+                        aria-label={`Añadir ${name} al carrito`}
+                    >
+                        <FiPlus size={16} strokeWidth={2.5} />
+                    </button>
                 </div>
-
-                <div className="flex-1"></div>
-
-                <button
-                    onClick={handleAddToCart}
-                    disabled={isAddDisabled}
-                    className="h-8 w-full rounded-full bg-[#4a3f35] hover:bg-[#362e26] text-white transition-colors mt-2 text-xs font-semibold flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                >
-                    {stock === 0 && !isFlavorProduct ? 'Sin Stock' : 'Añadir'}
-                </button>
             </div>
         </div>
     )

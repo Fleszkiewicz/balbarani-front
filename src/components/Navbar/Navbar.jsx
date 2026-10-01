@@ -43,7 +43,7 @@ const Navbar = () => {
                             <span className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tight leading-none whitespace-nowrap">
                                 Balbarani
                             </span>
-                            <span className="text-[9px] sm:text-[10px] md:text-[11px] font-medium text-gray-400 tracking-wider ml-0.5 uppercase whitespace-nowrap mt-1">
+                            <span className="text-[10px] sm:text-[10px] md:text-[11px] font-medium text-gray-400 tracking-wider ml-0.5 uppercase whitespace-nowrap mt-0.5 ">
                                 Heladería Artesanal • Baradero
                             </span>
                         </Link>
@@ -106,7 +106,7 @@ const Navbar = () => {
                             <div className="flex items-center justify-between pb-5 border-b border-neutral-800">
                                 <div>
                                     <h2 className="text-2xl font-bold tracking-tight text-white whitespace-nowrap">Balbarani</h2>
-                                    <p className="text-[10px] sm:text-[11px] font-medium text-gray-400 uppercase tracking-wider mt-0.5 whitespace-nowrap">
+                                    <p className="text-[10px] sm:text-[11px] font-medium text-gray-400 uppercase tracking-wider -mt-1 whitespace-nowrap">
                                         Heladería Artesanal • Baradero
                                     </p>
                                 </div>

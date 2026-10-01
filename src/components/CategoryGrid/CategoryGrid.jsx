@@ -38,7 +38,7 @@ const CategoryGrid = () => {
     }
 
     return (
-        <div className="mx-auto grid w-full max-w-6xl grid-cols-1 sm:grid-cols-2 gap-6 pb-6">
+        <div className="mx-auto grid w-full max-w-md sm:max-w-2xl md:max-w-2xl lg:max-w-6xl grid-cols-2 sm:grid-cols-2 gap-6 pb-6">
             {categories.map((category) => (
                 <Link
                     key={category._id}

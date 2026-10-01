@@ -4,6 +4,10 @@ import { getFlavorsService, createFlavorService, updateFlavorService, deleteFlav
 import { toast } from 'react-hot-toast'
 import { FaPlus, FaIceCream, FaBoxes, FaSearch } from 'react-icons/fa'
 import { FiTrash } from 'react-icons/fi'
+import ConfirmModal from '../../components/Common/ConfirmModal'
+
+// Categorías oficiales de sabores
+const FLAVOR_CATEGORIES = ['Cremas', 'Frutales', 'Chocolates', 'Dulce de leches']
 
 const AdminInventory = () => {
     // Modo de vista: 'stock' (Control de unidades físicas) o 'flavors' (Sabores artesanales)
@@ -12,9 +16,15 @@ const AdminInventory = () => {
     const [products, setProducts] = useState([])
     const [flavors, setFlavors] = useState([])
     const [loading, setLoading] = useState(true)
-    const [newFlavorName, setNewFlavorName] = useState('')
+    const [deletingFlavor, setDeletingFlavor] = useState(null)
+    const [isDeletingFlavor, setIsDeletingFlavor] = useState(false)
 
-    // Filtros de búsqueda y categoría
+    // Formulario de nuevo sabor
+    const [newFlavorName, setNewFlavorName] = useState('')
+    const [newFlavorCategory, setNewFlavorCategory] = useState('Cremas')
+
+    // Filtros de sabores y de stock
+    const [selectedFlavorCategoryFilter, setSelectedFlavorCategoryFilter] = useState('ALL')
     const [searchQuery, setSearchQuery] = useState('')
     const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('ALL')
 
@@ -60,7 +70,6 @@ const AdminInventory = () => {
     const handleToggleFlavor = async (flavor) => {
         try {
             const updated = !flavor.available
-            // Actualización optimista
             setFlavors(prev => prev.map(f =>
                 f._id === flavor._id ? { ...f, available: updated } : f
             ))
@@ -69,7 +78,7 @@ const AdminInventory = () => {
             toast.success(updated ? `Sabor ${flavor.name} activado` : `Sabor ${flavor.name} pausado`)
         } catch (error) {
             toast.error('Error al actualizar sabor')
-            loadData() // Revertir
+            loadData()
         }
     }
 
@@ -78,24 +87,30 @@ const AdminInventory = () => {
         if (!newFlavorName.trim()) return
 
         try {
-            const created = await createFlavorService({ name: newFlavorName.trim() })
-            setFlavors(prev => [...prev, created].sort((a, b) => a.name.localeCompare(b.name)))
+            const created = await createFlavorService({
+                name: newFlavorName.trim(),
+                category: newFlavorCategory,
+            })
+            setFlavors(prev => [...prev, created])
             setNewFlavorName('')
-            toast.success('Sabor agregado exitosamente')
+            toast.success(`Sabor "${created.name}" agregado a ${created.category}`)
         } catch (error) {
             toast.error(error.message || 'Error al agregar sabor')
         }
     }
 
-    const handleDeleteFlavor = async (flavorId) => {
-        if (!window.confirm('¿Estás seguro de eliminar este sabor?')) return
-
+    const handleConfirmDeleteFlavor = async () => {
+        if (!deletingFlavor) return
         try {
-            await deleteFlavorService(flavorId)
-            setFlavors(prev => prev.filter(f => f._id !== flavorId))
+            setIsDeletingFlavor(true)
+            await deleteFlavorService(deletingFlavor._id)
+            setFlavors(prev => prev.filter(f => f._id !== deletingFlavor._id))
             toast.success('Sabor eliminado')
+            setDeletingFlavor(null)
         } catch (error) {
             toast.error('Error al eliminar sabor')
+        } finally {
+            setIsDeletingFlavor(false)
         }
     }
 
@@ -132,7 +147,24 @@ const AdminInventory = () => {
         }, {})
     }, [products, selectedCategoryFilter, searchQuery])
 
-    // Pantalla de carga
+    // Sabores agrupados por categoría oficial
+    const flavorsByCategory = useMemo(() => {
+        const categoriesToShow = selectedFlavorCategoryFilter === 'ALL'
+            ? FLAVOR_CATEGORIES
+            : [selectedFlavorCategoryFilter]
+
+        return categoriesToShow.map(cat => {
+            const catFlavors = flavors.filter(f => (f.category || 'Cremas') === cat)
+            const availableCount = catFlavors.filter(f => f.available).length
+            return {
+                category: cat,
+                flavors: catFlavors,
+                availableCount,
+                totalCount: catFlavors.length,
+            }
+        })
+    }, [flavors, selectedFlavorCategoryFilter])
+
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -162,7 +194,7 @@ const AdminInventory = () => {
                                 Disponibilidad de Sabores
                             </h1>
                             <p className="text-xs sm:text-sm text-gray-500 mt-0.5 font-normal">
-                                Gestiona los sabores disponibles para venta online en mostrador.
+                                Gestioná los sabores artesanales organizados por Cremas, Frutales, Chocolates y Dulce de leches.
                             </p>
                         </>
                     )}
@@ -192,10 +224,9 @@ const AdminInventory = () => {
                 </div>
             </div>
 
-            {/* VISTA 1: TABLAS DE STOCK FÍSICO POR CATEGORÍA Y SUBCATEGORÍA */}
+            {/* VISTA 1: TABLAS DE STOCK FÍSICO POR CATEGORÍA Y SUBCATEGORÍA (ORIGINAL CON ESTADO) */}
             {activeTab === 'stock' && (
                 <div className="flex flex-col gap-6">
-
                     {/* Barra de Filtros y Búsqueda */}
                     <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-gray-200/90 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                         {/* Buscador */}
@@ -216,7 +247,7 @@ const AdminInventory = () => {
                             <select
                                 value={selectedCategoryFilter}
                                 onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-                                className="select select-sm rounded-xl border border-gray-200 bg-gray-50 text-xs text-gray-800 font-medium focus:outline-none"
+                                className="select select-sm rounded-xl border border-gray-200 bg-gray-50 text-xs text-gray-800 font-medium focus:outline-none cursor-pointer"
                             >
                                 <option value="ALL">Todas las categorías ({products.length})</option>
                                 {availableCategories.map(cat => (
@@ -226,7 +257,7 @@ const AdminInventory = () => {
                         </div>
                     </div>
 
-                    {/* Listado agrupado */}
+                    {/* Listado agrupado por Categoría y Subcategoría */}
                     {Object.keys(groupedByCategoryAndSubcategory).length === 0 ? (
                         <div className="bg-white rounded-2xl border border-dashed border-gray-300 p-12 text-center text-gray-400">
                             <FaBoxes className="mx-auto text-3xl mb-2 text-gray-300" />
@@ -288,7 +319,7 @@ const AdminInventory = () => {
                                                                     key={product._id}
                                                                     className="hover:bg-gray-50/60 transition-colors"
                                                                 >
-                                                                    {/* Producto (Imagen + Nombre con truncate para nombres largos + Precio) */}
+                                                                    {/* Producto (Imagen + Nombre con truncate + Precio) */}
                                                                     <td className="py-2 px-4 sm:px-6 min-w-0">
                                                                         <div className="flex items-center gap-3 min-w-0">
                                                                             {product.imageUrl ? (
@@ -313,7 +344,7 @@ const AdminInventory = () => {
                                                                         </div>
                                                                     </td>
 
-                                                                    {/* Estado de Stock (Alineado y fijado en columna constante) */}
+                                                                    {/* Estado de Stock (Agotado / Bajo stock / En stock) */}
                                                                     <td className="py-2 px-2 sm:px-4 text-right">
                                                                         <div className="flex items-center justify-end">
                                                                             {product.stock === 0 ? (
@@ -332,7 +363,7 @@ const AdminInventory = () => {
                                                                         </div>
                                                                     </td>
 
-                                                                    {/* Control Stepper compacto fijado al END de la fila */}
+                                                                    {/* Control Stepper compacto fijado al final de la fila */}
                                                                     <td className="py-2 px-4 sm:px-6 text-right">
                                                                         <div className="flex items-center justify-end gap-1.5">
                                                                             <div className="inline-flex items-center rounded-xl bg-gray-100 p-0.5">
@@ -371,7 +402,6 @@ const AdminInventory = () => {
                                                         </tbody>
                                                     </table>
                                                 </div>
-
                                             </div>
                                         ))}
                                     </div>
@@ -382,27 +412,41 @@ const AdminInventory = () => {
                 </div>
             )}
 
-            {/* VISTA 2: DISPONIBILIDAD DE SABORES (INTACTA) */}
+            {/* VISTA 2: DISPONIBILIDAD DE SABORES POR CATEGORÍA */}
             {activeTab === 'flavors' && (
-                <div className="bg-white rounded-2xl border border-gray-200/90 shadow-xs overflow-hidden max-w-4xl mx-auto">
-                    {/* Barra Superior con Input Compacto para Agregar */}
-                    <div className="p-4 sm:p-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gray-50/50">
+                <div className="flex flex-col gap-6 max-w-4xl mx-auto">
+                    {/* Barra Superior: Formulario para añadir sabor con Select de Categoría */}
+                    <div className="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200/90 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
-                            <h2 className="font-bold text-sm sm:text-base text-gray-900">Sabores Artesanales</h2>
+                            <h2 className="font-bold text-base text-gray-900">Añadir Sabor</h2>
                             <p className="text-xs text-gray-500 font-normal">
-                                Pausa o activa sabores según disponibilidad para venta online.
+                                Asignale un nombre y una categoría para catalogarlo.
                             </p>
                         </div>
 
-                        {/* Formulario compacto para nuevo sabor */}
-                        <form onSubmit={handleAddFlavor} className="flex items-center gap-2">
+                        {/* Formulario con Input de Nombre + Select de Categoría + Botón */}
+                        <form onSubmit={handleAddFlavor} className="flex flex-wrap items-center gap-2">
                             <input
                                 type="text"
-                                placeholder="Nuevo sabor..."
+                                placeholder="Nombre del sabor..."
                                 value={newFlavorName}
                                 onChange={(e) => setNewFlavorName(e.target.value)}
-                                className="input input-sm rounded-xl border border-gray-200 bg-white text-xs px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-neutral w-48 sm:w-56 font-normal"
+                                className="input input-sm rounded-xl border border-gray-200 bg-white text-xs px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-neutral w-44 sm:w-52 font-normal"
                             />
+
+                            {/* Select de Categoría */}
+                            <select
+                                value={newFlavorCategory}
+                                onChange={(e) => setNewFlavorCategory(e.target.value)}
+                                className="select select-sm rounded-xl border border-gray-200 bg-white text-xs px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-neutral font-medium cursor-pointer"
+                            >
+                                {FLAVOR_CATEGORIES.map((cat) => (
+                                    <option key={cat} value={cat}>
+                                        {cat}
+                                    </option>
+                                ))}
+                            </select>
+
                             <button
                                 type="submit"
                                 disabled={!newFlavorName.trim()}
@@ -414,68 +458,134 @@ const AdminInventory = () => {
                         </form>
                     </div>
 
-                    {/* Tabla Fina de Sabores */}
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="border-b border-gray-100 text-[10px] font-normal text-gray-400 uppercase tracking-wider bg-gray-50/40">
-                                    <th className="py-2.5 px-4 font-medium">Sabor</th>
-                                    <th className="py-2.5 px-4 font-medium text-center w-36">Estado Online</th>
-                                    <th className="py-2.5 px-4 font-medium text-right w-24">Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                {flavors.map((flavor) => (
-                                    <tr
-                                        key={flavor._id}
-                                        className="hover:bg-gray-50/60 transition-colors group"
-                                    >
-                                        <td className="py-2 px-4">
-                                            <span className={`text-xs sm:text-sm ${flavor.available
-                                                ? 'font-medium text-gray-900'
-                                                : 'font-normal text-gray-400 line-through'
-                                                }`}>
-                                                {flavor.name}
-                                            </span>
-                                        </td>
-
-                                        <td className="py-2 px-4 text-center">
-                                            <label className="inline-flex items-center gap-2 cursor-pointer select-none">
-                                                <input
-                                                    type="checkbox"
-                                                    className="toggle toggle-sm rounded-full border-gray-300 bg-white hover:bg-white [--tglbg:#D1D5DB] checked:[--tglbg:#16A34A] checked:border-[#16A34A]"
-                                                    checked={flavor.available}
-                                                    onChange={() => handleToggleFlavor(flavor)}
-                                                />
-                                                <span className={`text-[11px] font-medium hidden sm:inline ${flavor.available ? 'text-emerald-700' : 'text-gray-400'
-                                                    }`}>
-                                                    {flavor.available ? 'Disponible' : 'Pausado'}
-                                                </span>
-                                            </label>
-                                        </td>
-
-                                        <td className="py-2 px-4 text-right">
-                                            <button
-                                                className="w-7 h-7 inline-flex items-center justify-center rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                                                onClick={() => handleDeleteFlavor(flavor._id)}
-                                                title="Eliminar sabor permanentemente"
-                                            >
-                                                <FiTrash size={14} />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                    {/* Pestañas de Filtro por Categoría de Sabores */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                        <button
+                            type="button"
+                            onClick={() => setSelectedFlavorCategoryFilter('ALL')}
+                            className={`btn btn-xs rounded-full px-3.5 border-none font-semibold text-xs cursor-pointer transition-all ${selectedFlavorCategoryFilter === 'ALL'
+                                    ? 'bg-neutral text-white shadow-2xs'
+                                    : 'bg-white hover:bg-gray-100 text-gray-600 border border-gray-200'
+                                }`}
+                        >
+                            Todas ({flavors.length})
+                        </button>
+                        {FLAVOR_CATEGORIES.map((cat) => {
+                            const count = flavors.filter(f => (f.category || 'Cremas') === cat).length
+                            return (
+                                <button
+                                    key={cat}
+                                    type="button"
+                                    onClick={() => setSelectedFlavorCategoryFilter(cat)}
+                                    className={`btn btn-xs rounded-full px-3.5 border-none font-semibold text-xs cursor-pointer transition-all ${selectedFlavorCategoryFilter === cat
+                                            ? 'bg-neutral text-white shadow-2xs'
+                                            : 'bg-white hover:bg-gray-100 text-gray-600 border border-gray-200'
+                                        }`}
+                                >
+                                    {cat} ({count})
+                                </button>
+                            )
+                        })}
                     </div>
 
-                    {flavors.length === 0 && (
-                        <div className="p-8 text-center text-gray-400 text-xs font-normal">
-                            No hay sabores cargados aún.
-                        </div>
-                    )}
+                    {/* Listado de Sabores Agrupados por Categoría */}
+                    <div className="flex flex-col gap-5">
+                        {flavorsByCategory.map(({ category, flavors: catFlavors, availableCount, totalCount }) => (
+                            <div
+                                key={category}
+                                className="bg-white rounded-2xl border border-gray-200/90 shadow-2xs overflow-hidden"
+                            >
+                                {/* Cabecera de la Categoría de Sabor */}
+                                <div className="bg-gray-50/70 px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                                    <div className="flex items-center gap-2.5">
+                                        <h3 className="font-bold text-sm text-gray-900">
+                                            {category}
+                                        </h3>
+                                        <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full">
+                                            {availableCount} de {totalCount} disponibles
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {catFlavors.length === 0 ? (
+                                    <div className="p-6 text-center text-gray-400 text-xs">
+                                        No hay sabores cargados en {category}.
+                                    </div>
+                                ) : (
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left border-collapse">
+                                            <thead>
+                                                <tr className="border-b border-gray-100 text-[10px] font-normal text-gray-400 uppercase tracking-wider bg-gray-50/30">
+                                                    <th className="py-2.5 px-4 font-medium">Sabor</th>
+                                                    <th className="py-2.5 px-4 font-medium text-center w-36">Estado Online</th>
+                                                    <th className="py-2.5 px-4 font-medium text-right w-24">Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-100">
+                                                {catFlavors.map((flavor) => (
+                                                    <tr
+                                                        key={flavor._id}
+                                                        className="hover:bg-gray-50/60 transition-colors group"
+                                                    >
+                                                        <td className="py-2.5 px-4">
+                                                            <span className={`text-xs sm:text-sm ${flavor.available
+                                                                    ? 'font-medium text-gray-900'
+                                                                    : 'font-normal text-gray-400 line-through'
+                                                                }`}>
+                                                                {flavor.name}
+                                                            </span>
+                                                        </td>
+
+                                                        <td className="py-2.5 px-4 text-center">
+                                                            <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="toggle toggle-sm rounded-full border-gray-300 bg-white hover:bg-white [--tglbg:#D1D5DB] checked:[--tglbg:#16A34A] checked:border-[#16A34A]"
+                                                                    checked={flavor.available}
+                                                                    onChange={() => handleToggleFlavor(flavor)}
+                                                                />
+                                                                <span className={`text-[11px] font-medium hidden sm:inline ${flavor.available ? 'text-emerald-700' : 'text-gray-400'
+                                                                    }`}>
+                                                                    {flavor.available ? 'Disponible' : 'Pausado'}
+                                                                </span>
+                                                            </label>
+                                                        </td>
+
+                                                        <td className="py-2.5 px-4 text-right">
+                                                            <button
+                                                                type="button"
+                                                                className="w-7 h-7 inline-flex items-center justify-center rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                                                                onClick={() => setDeletingFlavor(flavor)}
+                                                                title="Eliminar sabor permanentemente"
+                                                            >
+                                                                <FiTrash size={14} />
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
+
+            {/* Modal de confirmación para eliminar sabor */}
+            <ConfirmModal
+                isOpen={Boolean(deletingFlavor)}
+                title="Eliminar sabor"
+                message={`¿Estás seguro de que deseas eliminar el sabor "${deletingFlavor?.name}"? Esta acción no se puede deshacer.`}
+                confirmText="Eliminar"
+                cancelText="Cancelar"
+                confirmVariant="danger"
+                iconType="trash"
+                isLoading={isDeletingFlavor}
+                onConfirm={handleConfirmDeleteFlavor}
+                onClose={() => setDeletingFlavor(null)}
+            />
         </div>
     )
 }

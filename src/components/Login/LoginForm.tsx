@@ -77,6 +77,7 @@ const LoginForm = () => {
         p-8
         shadow-[0_10px_35px_rgba(0,0,0,0.08)]
         backdrop-blur-sm
+        mb-20
     "
         >
             {/* Formulario de registro de email */}
@@ -177,31 +178,69 @@ const LoginForm = () => {
             {/* Link ¿Olvidaste tu contraseña? */}
             <div className="flex justify-center -mt-2">
                 <Link
-                    to="forgot-password"
+                    to="/forgot-password"
                     className="text-xs text-gray-500 hover:text-neutral hover:underline transition-colors"
                 >
                     ¿Olvidaste tu contraseña?
                 </Link>
             </div>
 
+            {/* Botón Principal: Iniciar sesión */}
             <button
                 type="submit"
                 className="
-        mt-2
-        rounded-full
-        bg-neutral
-        px-6
-        py-3
-        font-medium
-        text-neutral-content
-        transition-all
-        duration-300
-        hover:-translate-y-0.5
-        hover:shadow-lg
-    "
+                    mt-2
+                    rounded-full
+                    bg-neutral
+                    px-6
+                    py-3
+                    font-medium
+                    text-neutral-content
+                    transition-all
+                    duration-300
+                    hover:-translate-y-0.5
+                    hover:shadow-lg
+                    cursor-pointer
+                "
             >
                 Iniciar sesión
             </button>
+
+            {/* Separador */}
+            <div className="relative my-1 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-base-content/10"></div>
+                </div>
+                <span className="relative bg-base-100/90 px-3 text-xs text-base-content/50">
+                    ¿No tienes cuenta?
+                </span>
+            </div>
+
+            {/* Botón Secundario: Crear cuenta */}
+            <Link
+                to="/register"
+                className="
+                    rounded-full
+                    border
+                    border-neutral
+                    bg-transparent
+                    px-6
+                    py-3
+                    text-center
+                    font-medium
+                    text-neutral
+                    transition-all
+                    duration-300
+                    hover:bg-neutral
+                    hover:text-white
+                    hover:-translate-y-0.5
+                    hover:shadow-md
+                    cursor-pointer
+                "
+            >
+                Crear cuenta
+            </Link>
+
         </form>
     )
 }

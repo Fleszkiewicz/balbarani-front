@@ -26,7 +26,7 @@ const Cart = () => {
                                 <FiShoppingCart size={20} strokeWidth={2.5} />
                             </div>
                             {itemsQuantity > 0 && (
-                                <span className="absolute -top-1 -right-1 flex h-[22px] w-[22px] items-center justify-center rounded-full bg-black text-xs font-bold text-white shadow-sm ring-2 ring-white">
+                                <span className="absolute  -right-1 flex h-[20px] w-[20px] items-center justify-center rounded-full bg-black text-xs font-bold text-white shadow-sm ring-2 ring-white">
                                     {itemsQuantity}
                                 </span>
                             )}

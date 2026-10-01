@@ -66,3 +66,16 @@ export const deleteCategoryService = async (id) => {
         )
     }
 }
+
+// Servicio para reordenar categorías en lote (admin)
+export const reorderCategoriesService = async (items) => {
+    try {
+        const response = await axios.put(`${API_URL}/reorder`, { items })
+        return response.data
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.message || 'Error al reordenar las categorías',
+            { cause: error },
+        )
+    }
+}

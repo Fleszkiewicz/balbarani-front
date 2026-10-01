@@ -3,20 +3,28 @@ import { Link, useLocation } from 'react-router-dom'
 import { useUser } from '../../context/userContextData'
 import toast from 'react-hot-toast'
 import { logoutService } from '../../services/authServices'
+import ConfirmModal from '../Common/ConfirmModal'
+import { useState } from 'react'
 
 const UserDropDown = () => {
     const { userInfo, setUserInfo, isAdmin } = useUser()
     const location = useLocation()
     const isInAdmin = location.pathname.startsWith('/admin')
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
+    const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-    const handleLogout = async () => {
+    const handleConfirmLogout = async () => {
         try {
+            setIsLoggingOut(true)
             await logoutService()
             setUserInfo({})
+            setIsLogoutModalOpen(false)
             toast.success('Sesión cerrada')
         } catch (error) {
             console.error('Error al cerrar sesión:', error)
             toast.error('Error al cerrar sesión')
+        } finally {
+            setIsLoggingOut(false)
         }
     }
 
@@ -75,13 +83,26 @@ const UserDropDown = () => {
 
                 <li>
                     <button
-                        onClick={handleLogout}
+                        onClick={() => setIsLogoutModalOpen(true)}
                         className="rounded-xl hover:bg-red-100 text-red-600 bg-red-50 font-medium py-2.5 text-left"
                     >
                         Cerrar Sesión
                     </button>
                 </li>
             </ul>
+            {/* Modal de confirmación para cerrar sesión */}
+            <ConfirmModal
+                isOpen={isLogoutModalOpen}
+                title="Cerrar sesión"
+                message="¿Estás seguro de que deseas salir de tu cuenta?"
+                confirmText="Cerrar sesión"
+                cancelText="Cancelar"
+                confirmVariant="danger"
+                iconType="logout"
+                isLoading={isLoggingOut}
+                onConfirm={handleConfirmLogout}
+                onClose={() => setIsLogoutModalOpen(false)}
+            />
         </div>
     )
 }

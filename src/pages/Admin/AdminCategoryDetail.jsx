@@ -13,6 +13,7 @@ import ProductFormModal from './ProductFormModal.jsx'
 import { FiEdit2 } from "react-icons/fi";
 import { FiTrash } from "react-icons/fi";
 import { FiPlus } from "react-icons/fi";
+import ConfirmModal from '../../components/Common/ConfirmModal.jsx'
 
 const AdminCategoryDetail = () => {
     const { categorySlug } = useParams()
@@ -300,34 +301,18 @@ const AdminCategoryDetail = () => {
                     onUpdated={handleSubcategoryUpdated}
                 />
             )}
-            {deletingSubcategory && (
-                <div className="modal modal-open px-4">
-                    <section className="modal-box">
-                        <h3 className="font-bold text-lg mb-2">Eliminar subcategoría</h3>
-                        <p>
-                            ¿Seguro que querés eliminar{' '}
-                            <span className="font-semibold">{deletingSubcategory.name}</span>?
-                        </p>
-                        <div className="modal-action">
-                            <button
-                                className="btn btn-ghost"
-                                onClick={() => setDeletingSubcategory(null)}
-                                disabled={deletingSubcategory_loading}
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                className="btn btn-error"
-                                onClick={handleConfirmDeleteSubcategory}
-                                disabled={deletingSubcategory_loading}
-                            >
-                                {deletingSubcategory_loading ? 'Eliminando...' : 'Eliminar'}
-                            </button>
-                        </div>
-                    </section>
-                    <div className="modal-backdrop" onClick={() => setDeletingSubcategory(null)}></div>
-                </div>
-            )}
+            <ConfirmModal
+                isOpen={Boolean(deletingSubcategory)}
+                title="Eliminar subcategoría"
+                message={`¿Seguro que deseas eliminar la subcategoría "${deletingSubcategory?.name}"? Esta acción no se puede deshacer.`}
+                confirmText="Eliminar"
+                cancelText="Cancelar"
+                confirmVariant="danger"
+                iconType="trash"
+                isLoading={deletingSubcategory_loading}
+                onConfirm={handleConfirmDeleteSubcategory}
+                onClose={() => setDeletingSubcategory(null)}
+            />
 
             {/* ── Modales producto ── */}
             {createProductFor && (
@@ -354,34 +339,18 @@ const AdminCategoryDetail = () => {
                     }
                 />
             )}
-            {deletingProduct && (
-                <div className="modal modal-open px-4">
-                    <section className="modal-box">
-                        <h3 className="font-bold text-lg mb-2">Eliminar producto</h3>
-                        <p>
-                            ¿Seguro que querés eliminar{' '}
-                            <span className="font-semibold">{deletingProduct.product.name}</span>?
-                        </p>
-                        <div className="modal-action">
-                            <button
-                                className="btn btn-ghost"
-                                onClick={() => setDeletingProduct(null)}
-                                disabled={deletingProduct_loading}
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                className="btn btn-error"
-                                onClick={handleConfirmDeleteProduct}
-                                disabled={deletingProduct_loading}
-                            >
-                                {deletingProduct_loading ? 'Eliminando...' : 'Eliminar'}
-                            </button>
-                        </div>
-                    </section>
-                    <div className="modal-backdrop" onClick={() => setDeletingProduct(null)}></div>
-                </div>
-            )}
+            <ConfirmModal
+                isOpen={Boolean(deletingProduct)}
+                title="Eliminar producto"
+                message={`¿Seguro que deseas eliminar el producto "${deletingProduct?.product?.name}"? Esta acción no se puede deshacer.`}
+                confirmText="Eliminar"
+                cancelText="Cancelar"
+                confirmVariant="danger"
+                iconType="trash"
+                isLoading={deletingProduct_loading}
+                onConfirm={handleConfirmDeleteProduct}
+                onClose={() => setDeletingProduct(null)}
+            />
         </div>
     )
 }

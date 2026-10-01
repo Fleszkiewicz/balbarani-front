@@ -14,6 +14,9 @@ import {
 import { getFlavorsService } from '../../services/flavorServices.js'
 import QuantityStepper from './QuantityStepper.jsx'
 
+// Categorías oficiales de sabores
+const FLAVOR_CATEGORIES = ['Cremas', 'Frutales', 'Chocolates', 'Dulce de leches']
+
 const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
     const { addToCart, loading } = useCart()
     const { userInfo } = useUser()
@@ -25,6 +28,7 @@ const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
     const [globalFlavors, setGlobalFlavors] = useState([])
     const [flavorQuantities, setFlavorQuantities] = useState({})
     const [loadingFlavors, setLoadingFlavors] = useState(true)
+    const [selectedCategory, setSelectedCategory] = useState('Todos') // 'Todos' | 'Cremas' | 'Frutales' | 'Chocolates' | 'Dulce de leches'
 
     useEffect(() => {
         const fetchFlavors = async () => {
@@ -92,6 +96,30 @@ const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
         onClose()
     }
 
+    // Calcular cuántas porciones seleccionadas pertenecen a cada categoría
+    const selectedPortionsByCategory = useMemo(() => {
+        const counts = {}
+        FLAVOR_CATEGORIES.forEach(cat => {
+            counts[cat] = 0
+        })
+        globalFlavors.forEach(flavor => {
+            const cat = flavor.category || 'Cremas'
+            const qty = flavorQuantities[flavor.name] || 0
+            if (qty > 0) {
+                counts[cat] = (counts[cat] || 0) + qty
+            }
+        })
+        return counts
+    }, [globalFlavors, flavorQuantities])
+
+    // Filtrar o agrupar sabores según la categoría activa
+    const categoriesToRender = useMemo(() => {
+        if (selectedCategory === 'Todos') {
+            return FLAVOR_CATEGORIES
+        }
+        return [selectedCategory]
+    }, [selectedCategory])
+
     return createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/40 backdrop-blur-sm" onClick={(e) => {
             if (e.target === e.currentTarget) onClose();
@@ -112,7 +140,7 @@ const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
                     <button
                         type="button"
                         onClick={onClose}
-                        className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors shadow-sm"
+                        className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors shadow-sm cursor-pointer"
                         aria-label="Cerrar"
                     >
                         ✕
@@ -121,8 +149,8 @@ const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
 
                 {/* Body */}
                 <div className="p-6 flex-1 overflow-y-auto">
-                    {/* Progress Bar */}
-                    <div className="mb-6">
+                    {/* Barra de progreso de porciones */}
+                    <div className="mb-4">
                         <div className="flex justify-between text-sm font-semibold mb-2">
                             <span className={totalPortions === maxPortions ? "text-green-600" : "text-gray-600"}>
                                 {totalPortions === maxPortions ? "¡Listo!" : "Porciones seleccionadas"}
@@ -139,44 +167,117 @@ const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
                         </div>
                     </div>
 
+                    {/* Selector de pestañas por categoría */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-3 mb-4 scrollbar-none border-b border-gray-100">
+                        <button
+                            type="button"
+                            onClick={() => setSelectedCategory('Todos')}
+                            className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${selectedCategory === 'Todos'
+                                    ? 'bg-neutral text-white shadow-xs'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                }`}
+                        >
+                            Todos
+                        </button>
+                        {FLAVOR_CATEGORIES.map((cat) => {
+                            const selectedCount = selectedPortionsByCategory[cat] || 0
+                            return (
+                                <button
+                                    key={cat}
+                                    type="button"
+                                    onClick={() => setSelectedCategory(cat)}
+                                    className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${selectedCategory === cat
+                                            ? 'bg-neutral text-white shadow-xs'
+                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                        }`}
+                                >
+                                    <span>{cat}</span>
+                                    {selectedCount > 0 && (
+                                        <span className={`w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold ${selectedCategory === cat ? 'bg-amber-400 text-neutral-900' : 'bg-amber-200 text-amber-900'
+                                            }`}>
+                                            {selectedCount}
+                                        </span>
+                                    )}
+                                </button>
+                            )
+                        })}
+                    </div>
+
                     {loadingFlavors ? (
                         <div className="flex flex-col items-center justify-center py-12">
                             <span className="loading loading-spinner loading-lg text-amber-500"></span>
                             <p className="text-gray-500 mt-4 font-medium">Cargando sabores...</p>
                         </div>
+                    ) : globalFlavors.length === 0 ? (
+                        <p className="text-center text-gray-400 py-8 text-sm">
+                            No hay sabores disponibles en este momento.
+                        </p>
                     ) : (
-                        <ul className="space-y-2">
-                            {globalFlavors.map((flavor) => {
-                                const qty = flavorQuantities[flavor.name] || 0
-                                const unavailable = !flavor.available
+                        <div className="space-y-5">
+                            {categoriesToRender.map((category) => {
+                                const catFlavors = globalFlavors.filter(
+                                    (f) => (f.category || 'Cremas') === category
+                                )
+
+                                if (catFlavors.length === 0) return null
 
                                 return (
-                                    <li
-                                        key={flavor._id || flavor.name}
-                                        className={`flex items-center justify-between gap-3 rounded-2xl transition-colors ${qty > 0 ? 'bg-amber-50/50 border border-amber-100/50' : 'bg-white border border-transparent hover:bg-gray-50'} ${unavailable ? 'opacity-50 grayscale pointer-events-none' : ''}`}
-                                    >
-                                        <span className={`flex-1 font-medium ${qty > 0 ? 'text-amber-900' : 'text-gray-700'}`}>
-                                            {flavor.name}
-                                        </span>
-                                        <QuantityStepper
-                                            value={qty}
-                                            unavailable={unavailable}
-                                            disabledDecrease={qty <= 0}
-                                            disabledIncrease={
-                                                unavailable ||
-                                                totalPortions >= maxPortions
-                                            }
-                                            onDecrease={() =>
-                                                handleFlavorChange(flavor.name, -1)
-                                            }
-                                            onIncrease={() =>
-                                                handleFlavorChange(flavor.name, 1)
-                                            }
-                                        />
-                                    </li>
+                                    <div key={category} className="space-y-2">
+                                        {/* Título de la categoría si está en vista "Todos" */}
+                                        {selectedCategory === 'Todos' && (
+                                            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 pt-1">
+                                                {category}
+                                            </h4>
+                                        )}
+
+                                        <ul className="space-y-2">
+                                            {catFlavors.map((flavor) => {
+                                                const qty = flavorQuantities[flavor.name] || 0
+                                                const unavailable = !flavor.available
+
+                                                return (
+                                                    <li
+                                                        key={flavor._id || flavor.name}
+                                                        className={`flex items-center justify-between gap-3 p-2.5 rounded-2xl transition-colors ${qty > 0
+                                                                ? 'bg-amber-50/60 border border-amber-200/60'
+                                                                : 'bg-white border border-gray-100 hover:bg-gray-50'
+                                                            } ${unavailable ? 'opacity-40 grayscale pointer-events-none' : ''}`}
+                                                    >
+                                                        <div className="min-w-0 flex-1">
+                                                            <span className={`text-sm font-medium ${qty > 0 ? 'text-amber-950 font-semibold' : 'text-gray-800'
+                                                                }`}>
+                                                                {flavor.name}
+                                                            </span>
+                                                            {unavailable && (
+                                                                <span className="block text-[10px] text-gray-400">
+                                                                    No disponible
+                                                                </span>
+                                                            )}
+                                                        </div>
+
+                                                        <QuantityStepper
+                                                            value={qty}
+                                                            unavailable={unavailable}
+                                                            disabledDecrease={qty <= 0}
+                                                            disabledIncrease={
+                                                                unavailable ||
+                                                                totalPortions >= maxPortions
+                                                            }
+                                                            onDecrease={() =>
+                                                                handleFlavorChange(flavor.name, -1)
+                                                            }
+                                                            onIncrease={() =>
+                                                                handleFlavorChange(flavor.name, 1)
+                                                            }
+                                                        />
+                                                    </li>
+                                                )
+                                            })}
+                                        </ul>
+                                    </div>
                                 )
                             })}
-                        </ul>
+                        </div>
                     )}
                 </div>
 
@@ -190,9 +291,9 @@ const ArtisanIceCreamConfigModal = ({ product, categorySlug, onClose }) => {
                         type="button"
                         onClick={handleAddToCart}
                         disabled={loading || !isConfigurationValid}
-                        className={`w-full sm:w-auto px-8 h-12 rounded-full font-bold transition-all shadow-sm flex items-center justify-center gap-2 ${!isConfigurationValid
-                            ? 'bg-gray-100 text-gray-400'
-                            : 'bg-neutral text-white hover:bg-neutral-800 hover:-translate-y-0.5 hover:shadow-md'
+                        className={`w-full sm:w-auto px-8 h-12 rounded-full font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer ${!isConfigurationValid
+                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                : 'bg-neutral text-white hover:bg-neutral-800 hover:-translate-y-0.5 hover:shadow-md'
                             }`}
                     >
                         {loading ? <span className="loading loading-spinner loading-sm"></span> : 'Agregar al carrito'}

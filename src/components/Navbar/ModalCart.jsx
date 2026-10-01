@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { FiTrash } from "react-icons/fi";
 import { FaMinus, FaPlus } from 'react-icons/fa'
 import { useCart } from '../../context/cartContextData.js'
 import { Spinner, EmptyState } from '../ui'
 import { Link } from 'react-router-dom'
+import ConfirmModal from '../Common/ConfirmModal'
 import { createPortal } from 'react-dom'
 import {
     formatExtrasSummary,
@@ -11,6 +13,7 @@ import {
 
 
 const ModalCart = () => {
+    const [isClearModalOpen, setIsClearModalOpen] = useState(false)
     const {
         cart,
         closeModal,
@@ -26,6 +29,7 @@ const ModalCart = () => {
     if (!isModalOpen) return null
 
     return createPortal(
+        <>
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/40 backdrop-blur-sm" onClick={(e) => {
             if (e.target === e.currentTarget) closeModal();
         }}>
@@ -156,13 +160,9 @@ const ModalCart = () => {
                         </div>
                         <div className="flex flex-col sm:flex-row gap-3">
                             <button
-                                onClick={() => {
-                                    if (window.confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
-                                        clearCart()
-                                    }
-                                }}
+                                onClick={() => setIsClearModalOpen(true)}
                                 disabled={loading}
-                                className="px-6 h-12 rounded-full font-semibold text-red-500 hover:bg-red-200 transition-colors flex-1 sm:flex-none bg-red-100"
+                                className="px-6 h-12 rounded-full font-semibold text-red-500 hover:bg-red-200 transition-colors flex-1 sm:flex-none bg-red-100 cursor-pointer"
                             >
                                 Vaciar
                             </button>
@@ -177,7 +177,23 @@ const ModalCart = () => {
                     </div>
                 )}
             </section>
-        </div>,
+        </div>
+            {/* Modal de confirmación para vaciar carrito */}
+            <ConfirmModal
+                isOpen={isClearModalOpen}
+                title="Vaciar carrito"
+                message="¿Estás seguro de que quieres eliminar todos los artículos de tu carrito de compras?"
+                confirmText="Vaciar carrito"
+                cancelText="Continuar comprando"
+                confirmVariant="danger"
+                iconType="trash"
+                onConfirm={() => {
+                    clearCart()
+                    setIsClearModalOpen(false)
+                }}
+                onClose={() => setIsClearModalOpen(false)}
+            />
+        </>,
         document.body
     )
 }

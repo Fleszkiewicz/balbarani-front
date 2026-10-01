@@ -74,3 +74,16 @@ export const deleteProductService = async (id) => {
         )
     }
 }
+
+// Servicio para reordenar productos en lote (admin)
+export const reorderProductsService = async (items) => {
+    try {
+        const response = await axios.put(`${API_URL}/reorder`, { items })
+        return response.data
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.message || 'Error al reordenar los productos',
+            { cause: error },
+        )
+    }
+}

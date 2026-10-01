@@ -57,3 +57,16 @@ export const updateSubcategoryService = async (id, data) => {
         )
     }
 }
+
+// Servicio para reordenar subcategorías en lote (admin)
+export const reorderSubcategoriesService = async (items) => {
+    try {
+        const response = await axios.put(`${API_URL}/reorder`, { items })
+        return response.data
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.message || 'Error al reordenar las subcategorías',
+            { cause: error },
+        )
+    }
+}

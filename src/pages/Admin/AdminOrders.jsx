@@ -18,6 +18,7 @@ import {
 } from 'react-icons/fa'
 import { GrLocation } from "react-icons/gr"
 import toast from 'react-hot-toast'
+import ConfirmModal from '../../components/Common/ConfirmModal'
 
 // Helper para armar el link directo a WhatsApp formateando a número argentino (549...)
 const getWhatsAppLink = (phone, order) => {
@@ -62,6 +63,8 @@ const AdminOrders = () => {
     const [loading, setLoading] = useState(true)
     const [expandedOrders, setExpandedOrders] = useState({})
     const [updatingId, setUpdatingId] = useState(null)
+    const [cancelingOrder, setCancelingOrder] = useState(null)
+    const [isCanceling, setIsCanceling] = useState(false)
 
     // Modo de vista: 'live' (Tablero 3 columnas) o 'history' (Columna única a lo largo)
     const [viewMode, setViewMode] = useState('live')
@@ -127,19 +130,19 @@ const AdminOrders = () => {
     }
 
     // Cancelar o descartar una comanda
-    const handleCancelOrder = async (orderId) => {
-        if (!window.confirm('¿Seguro que deseas cancelar esta comanda?')) return
-
+    const handleConfirmCancelOrder = async () => {
+        if (!cancelingOrder) return
         try {
-            setUpdatingId(orderId)
-            const updated = await updateOrderStatusService(orderId, { status: 'cancelado' })
-            setOrders((prev) => prev.map((ord) => (ord._id === orderId ? updated : ord)))
+            setIsCanceling(true)
+            const updated = await updateOrderStatusService(cancelingOrder._id, { status: 'cancelado' })
+            setOrders((prev) => prev.map((ord) => (ord._id === cancelingOrder._id ? updated : ord)))
             toast.error('Pedido cancelado')
+            setCancelingOrder(null)
         } catch (error) {
             console.error(error)
             toast.error(error.message || 'Error al cancelar')
         } finally {
-            setUpdatingId(null)
+            setIsCanceling(false)
         }
     }
 
@@ -301,7 +304,7 @@ const AdminOrders = () => {
                 {/* Botones de Acción */}
                 <div className="p-3 border-t border-gray-200 bg-white flex items-center gap-2 mt-auto">
                     <button
-                        onClick={() => handleCancelOrder(order._id)}
+                        onClick={() => setCancelingOrder(order)}
                         disabled={isUpdating}
                         className="w-8 h-8 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-400 hover:text-gray-500 flex items-center justify-center transition-colors shrink-0"
                         title="Cancelar / Descartar comanda"
@@ -708,6 +711,20 @@ const AdminOrders = () => {
                     </div>
                 </div>
             )}
+        
+            {/* Modal de confirmación para cancelar comanda */}
+            <ConfirmModal
+                isOpen={Boolean(cancelingOrder)}
+                title="Cancelar comanda"
+                message={`¿Seguro que deseas cancelar la comanda #${cancelingOrder?._id?.slice(-6).toUpperCase()} de ${cancelingOrder?.shippingDetails?.name || 'Cliente'}?`}
+                confirmText="Cancelar comanda"
+                cancelText="Volver"
+                confirmVariant="danger"
+                iconType="alert"
+                isLoading={isCanceling}
+                onConfirm={handleConfirmCancelOrder}
+                onClose={() => setCancelingOrder(null)}
+            />
         </div>
     )
 }

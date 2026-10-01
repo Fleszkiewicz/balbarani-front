@@ -75,7 +75,7 @@ const CategoryPage = () => {
     return (
         <div className="pb-16">
             {/* Header de Categoría */}
-            <div className={`relative mx-4 mt-8 mb-12 rounded-[2.5rem] overflow-hidden p-8 md:p-16 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] flex flex-col items-center text-center max-w-5xl md:mx-auto ${!category?.imageUrl ? 'bg-white border border-gray-100' : ''}`}>
+            <div className={`relative mx-4 mt-6 mb-12 rounded-[2.5rem] overflow-hidden p-2 md:p-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] flex flex-col items-center text-center max-w-5xl md:mx-auto ${!category?.imageUrl ? 'bg-white border border-gray-100' : ''}`}>
                 {category?.imageUrl && (
                     <>
                         <img

@@ -46,7 +46,8 @@ const AdminLayout = () => {
                                     ADMIN
                                 </span>
                             </div>
-                            <span className="text-[9px] sm:text-[10px] md:text-[11px] font-medium text-gray-400 tracking-wider ml-0.5 uppercase whitespace-nowrap mt-1">
+
+                            <span className="text-[10px] sm:text-[10px] md:text-[11px] font-medium text-gray-400 tracking-wider ml-0.5 uppercase whitespace-nowrap mt-0.5 ">
                                 Heladería Artesanal • Baradero
                             </span>
                         </Link>
@@ -61,8 +62,8 @@ const AdminLayout = () => {
                                     key={item.path}
                                     to={item.path}
                                     className={`text-[15px] font-medium tracking-tight transition-colors py-0.5 whitespace-nowrap ${active
-                                            ? 'text-pink-400 border-b-2 border-pink-600'
-                                            : 'text-white hover:text-pink-400'
+                                        ? 'text-pink-400 border-b-2 border-pink-600'
+                                        : 'text-white hover:text-pink-400'
                                         }`}
                                 >
                                     {item.label}
@@ -123,8 +124,8 @@ const AdminLayout = () => {
                                             to={item.path}
                                             onClick={() => setIsMenuOpen(false)}
                                             className={`flex items-center gap-3 p-3 rounded-xl transition-all ${active
-                                                    ? 'bg-neutral-900 text-pink-400 font-semibold'
-                                                    : 'text-white hover:bg-neutral-900 font-medium'
+                                                ? 'bg-neutral-900 text-pink-400 font-semibold'
+                                                : 'text-white hover:bg-neutral-900 font-medium'
                                                 }`}
                                         >
                                             <span className="text-sm font-semibold">{item.label}</span>
