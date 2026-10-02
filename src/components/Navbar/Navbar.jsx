@@ -5,6 +5,7 @@ import UserDropDown from './UserDropDown.jsx'
 import { useUser } from '../../context/userContextData.ts'
 import { FiMenu, FiX, FiShoppingBag, FiInfo, FiBriefcase, FiMail, FiUser } from 'react-icons/fi'
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa'
+import { TbLogin2 } from 'react-icons/tb'
 
 const Navbar = () => {
     const { loading, userInfo } = useUser()
@@ -80,10 +81,10 @@ const Navbar = () => {
                         ) : (
                             <Link
                                 to="/login"
-                                className="btn btn-sm rounded-full bg-neutral text-white hover:text-pink-400 hover:bg-neutral border-none text-[14px] font-medium px-4 gap-1.5 shadow-2xs"
+                                className="btn btn-sm rounded-full bg-neutral text-white hover:text-pink-400 hover:bg-neutral border-none text-[14px] font-normal px-4 gap-1.5 shadow-2xs"
                             >
-                                <FiUser size={18} />
-                                <span className="hidden sm:inline">Ingresar</span>
+                                <TbLogin2 size={24} />
+                                <span className="hidden sm:inline">Iniciar Sesión</span>
                             </Link>
                         )}
                     </div>

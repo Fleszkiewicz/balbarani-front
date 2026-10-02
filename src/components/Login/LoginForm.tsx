@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import { TbLogin2, TbUserPlus, TbEye, TbEyeOff } from 'react-icons/tb'
 import { loginService } from '../../services/authServices'
 import { useUser } from '../../context/userContextData'
 import { Navigate, Link } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
-
 
 type LoginFormValues = {
     email: string
@@ -161,9 +160,9 @@ const LoginForm = () => {
 "
                     >
                         {showPassword ? (
-                            <FaEyeSlash size={18} />
+                            <TbEyeOff size={18} />
                         ) : (
-                            <FaEye size={18} />
+                            <TbEye size={18} />
                         )}
                     </button>
                 </div>
@@ -189,20 +188,10 @@ const LoginForm = () => {
             <button
                 type="submit"
                 className="
-                    mt-2
-                    rounded-full
-                    bg-neutral
-                    px-6
-                    py-3
-                    font-medium
-                    text-neutral-content
-                    transition-all
-                    duration-300
-                    hover:-translate-y-0.5
-                    hover:shadow-lg
-                    cursor-pointer
+                    justify-center rounded-xl bg-neutral hover:bg-black/90 px-4 py-2 gap-1.5 text-md font-normal text-white flex items-center 
                 "
             >
+                <TbLogin2 size={18} className='text-white' />
                 Iniciar sesión
             </button>
 
@@ -220,24 +209,10 @@ const LoginForm = () => {
             <Link
                 to="/register"
                 className="
-                    rounded-full
-                    border
-                    border-neutral
-                    bg-transparent
-                    px-6
-                    py-3
-                    text-center
-                    font-medium
-                    text-neutral
-                    transition-all
-                    duration-300
-                    hover:bg-neutral
-                    hover:text-white
-                    hover:-translate-y-0.5
-                    hover:shadow-md
-                    cursor-pointer
+                    justify-center rounded-xl bg-gray-300/60 hover:bg-gray-400/40 px-4 py-2 gap-1.5 text-md font-normal text-gray-800 flex items-center 
                 "
             >
+                <TbUserPlus size={18} className='text-gray-800' />
                 Crear cuenta
             </Link>
 

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { forgotPasswordService, resetPasswordService } from '../services/authServices'
-import { FaEye, FaEyeSlash, FaArrowLeft, FaKey } from 'react-icons/fa'
+import { FaEye, FaEyeSlash, FaArrowLeft } from 'react-icons/fa'
 import toast from 'react-hot-toast'
+import { TbKey, TbLockShare } from 'react-icons/tb'
 
 const ForgotPassword = () => {
     const navigate = useNavigate()
@@ -79,15 +80,15 @@ const ForgotPassword = () => {
     return (
         <div className="mt-16 px-4">
             <div className="mx-auto max-w-md rounded-[28px] border border-base-content/10 bg-base-100/70 p-8 shadow-[0_10px_35px_rgba(0,0,0,0.08)] backdrop-blur-sm">
-                <Link to="/login" className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 mb-4 transition-colors font-semibold">
-                    <FaArrowLeft /> Volver al Login
+                <Link to="/login" className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 mb-4 transition-colors font-medium">
+                    <FaArrowLeft /> Volver
                 </Link>
 
                 <div className="text-center mb-6">
-                    <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-600 mx-auto flex items-center justify-center mb-3 text-xl">
-                        <FaKey />
+                    <div className="w-16 h-16 rounded-full bg-gray-200 text-amber-600 mx-auto flex items-center justify-center mb-3 text-xl">
+                        <TbKey size={32} className='text-gray-800' />
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1 className="text-xl font-semibold text-gray-900">
                         {step === 'request' ? 'Recuperar Contraseña' : 'Nueva Contraseña'}
                     </h1>
                     <p className="text-xs text-gray-500 mt-1">
@@ -100,7 +101,6 @@ const ForgotPassword = () => {
                 {step === 'request' ? (
                     <form onSubmit={handleRequestCode} className="flex flex-col gap-4">
                         <div>
-                            <label className="label text-xs font-bold text-gray-600">Correo Electrónico</label>
                             <input
                                 type="email"
                                 required
@@ -113,8 +113,10 @@ const ForgotPassword = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="mt-2 rounded-full bg-neutral py-3 font-medium text-white transition-all hover:shadow-lg disabled:opacity-50"
+                            className="justify-center rounded-xl bg-neutral hover:bg-black/90 px-4 py-2 gap-1.5 text-md font-normal text-white flex items-center"
                         >
+                            <TbLockShare size={18} className='text-white' />
+
                             {loading ? 'Enviando...' : 'Enviar Código'}
                         </button>
                     </form>

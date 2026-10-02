@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useUser } from '../../context/userContextData'
 import { useForm } from 'react-hook-form'
-import { FaEye, FaEyeSlash, FaEnvelopeOpenText } from 'react-icons/fa'
+import { FaEnvelopeOpenText } from 'react-icons/fa'
+import { TbEye, TbEyeOff, TbUserPlus, TbMailOpened, TbLoader } from 'react-icons/tb'
 import { registerService, verifyEmailService, resendCodeService } from '../../services/authServices'
 import { Navigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
@@ -123,11 +124,11 @@ const RegisterForm = () => {
     if (step === 'verify') {
         return (
             <div className="mx-auto mt-8 max-w-md rounded-[28px] border border-base-content/10 bg-base-100/70 p-8 shadow-[0_10px_35px_rgba(0,0,0,0.08)] backdrop-blur-sm text-center mb-20">
-                <div className="w-16 h-16 rounded-full bg-primary/10 text-primary mx-auto flex items-center justify-center mb-4 text-2xl">
-                    <FaEnvelopeOpenText />
+                <div className="w-16 h-16 rounded-full bg-gray-200 text-primary mx-auto flex items-center justify-center mb-4 text-2xl">
+                    <TbMailOpened size={32} className='text-gray-800' />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Verificá tu correo</h2>
-                <p className="text-sm text-gray-500 mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">Verificá tu correo</h2>
+                <p className="text-[14px] text-gray-500 mb-6">
                     Ingresá el código de 6 dígitos que enviamos a: <br />
                     <strong className="text-gray-800">{emailToVerify}</strong>
                 </p>
@@ -138,16 +139,17 @@ const RegisterForm = () => {
                         maxLength={6}
                         value={code}
                         onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-                        placeholder="000000"
-                        className="w-full text-center text-3xl font-mono tracking-[0.4em] py-3 px-4 rounded-2xl border border-base-content/20 bg-base-100 font-bold focus:outline-none focus:ring-4 focus:ring-primary/10"
+                        placeholder="_ _ _ _ _ _"
+                        className="w-full text-center text-3xl tracking-[0.4em] py-3 px-4 rounded-2xl border border-base-content/20 bg-base-100 font-normal focus:outline-none focus:ring-4 focus:ring-primary/10"
                         autoFocus
                     />
 
                     <button
                         type="submit"
                         disabled={isVerifying || code.length !== 6}
-                        className="mt-2 rounded-full bg-neutral py-3 font-medium text-white transition-all hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-50"
+                        className="justify-center rounded-xl bg-neutral hover:bg-black/90 px-4 py-2 gap-1.5 text-md font-normal text-white flex items-center disabled:opacity-50"
                     >
+                        {isVerifying ? <TbLoading /> : <TbUserPlus />}
                         {isVerifying ? 'Verificando...' : 'Activar Cuenta'}
                     </button>
                 </form>
@@ -223,7 +225,7 @@ const RegisterForm = () => {
                         onClick={() => setShowPassword((prev) => !prev)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-base-content/50 hover:text-base-content"
                     >
-                        {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                        {showPassword ? <TbEyeOff size={18} /> : <TbEye size={18} />}
                     </button>
                 </div>
                 {errors.password && <p className="mt-2 ml-1 text-sm text-red-500">{errors.password.message}</p>}
@@ -231,8 +233,9 @@ const RegisterForm = () => {
 
             <button
                 type="submit"
-                className="mt-2 rounded-full bg-neutral px-6 py-3 font-medium text-neutral-content transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                className="justify-center rounded-xl bg-neutral hover:bg-black/90 px-4 py-2 gap-1.5 text-md font-normal text-white flex items-center"
             >
+                <TbUserPlus size={18} className='text-white' />
                 Continuar
             </button>
         </form>

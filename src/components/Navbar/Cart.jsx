@@ -3,6 +3,7 @@ import ModalCart from './ModalCart.jsx'
 import { useCart } from '../../context/cartContextData.js'
 import { TbShoppingCartDollar, TbShoppingCart, TbShoppingCartSearch } from "react-icons/tb";
 
+
 const Cart = () => {
     const { total, itemsQuantity, openModal, isModalOpen } = useCart()
 
@@ -24,7 +25,7 @@ const Cart = () => {
                     >
                         <div className="indicator relative">
                             <div className="w-11 h-11 rounded-full  flex items-center justify-center text-white shadow-sm hover:shadow-md transition-shadow cursor-pointer hover:text-pink-400">
-                                <FiShoppingCart size={20} />
+                                <TbShoppingCart size={24} />
                             </div>
                             {itemsQuantity > 0 && (
                                 <span className="absolute top-1 -right-1 flex h-[20px] w-[20px] items-center justify-center rounded-full bg-black text-xs font-bold text-white shadow-sm ring-2 ring-pink-500">
