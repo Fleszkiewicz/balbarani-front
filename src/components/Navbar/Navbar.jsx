@@ -58,8 +58,8 @@ const Navbar = () => {
                                 <Link
                                     key={item.path}
                                     to={item.path}
-                                    className={`text-[15px] font-medium tracking-tight transition-colors py-0.5 whitespace-nowrap ${isActive
-                                        ? 'text-pink-400 border-b-2 border-pink-600'
+                                    className={`text-[15px] font-normal tracking-tight transition-colors py-0.5 whitespace-nowrap ${isActive
+                                        ? 'text-pink-400 border-b-2 border-pink-500'
                                         : 'text-white hover:text-pink-400'
                                         }`}
                                 >

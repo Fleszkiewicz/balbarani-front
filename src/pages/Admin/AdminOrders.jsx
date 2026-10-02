@@ -19,6 +19,7 @@ import {
 import { GrLocation } from "react-icons/gr"
 import toast from 'react-hot-toast'
 import ConfirmModal from '../../components/Common/ConfirmModal'
+import { TbHistory, TbMapPin, TbMoped, TbReceipt, TbBrandWhatsapp } from 'react-icons/tb'
 
 // Helper para armar el link directo a WhatsApp formateando a número argentino (549...)
 const getWhatsAppLink = (phone, order) => {
@@ -414,7 +415,7 @@ const AdminOrders = () => {
                     <div>
                         <p className="text-[10px] uppercase font-normal text-gray-400">Dirección</p>
                         <div className="flex items-center gap-1 font-medium text-gray-700 mt-0.5">
-                            <GrLocation className="text-gray-700 shrink-0 text-xs" />
+                            <TbMapPin className="text-gray-700 shrink-0 text-xs" />
                             <span className="truncate">{order.shippingDetails?.address}</span>
                         </div>
                     </div>
@@ -428,7 +429,7 @@ const AdminOrders = () => {
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-1 font-medium text-gray-700 hover:text-gray-900"
                             >
-                                <FaWhatsapp size={12} />
+                                <TbBrandWhatsapp size={12} />
                                 <span>{order.shippingDetails?.phone}</span>
                             </a>
                         </div>
@@ -527,10 +528,9 @@ const AdminOrders = () => {
                             setNewDeliveryFee(deliveryFee)
                             setIsDeliveryModalOpen(true)
                         }}
-                        className="btn btn-sm bg-white hover:bg-gray-50 border border-gray-200 rounded-full text-xs gap-1.5 text-gray-700 shadow-xs"
-                        title="Modificar precio del delivery"
+                        className="rounded-xl bg-neutral hover:bg-black/90 px-4 py-1.5 gap-1.5 text-sm font-normal text-white flex items-center"
                     >
-                        <FaMotorcycle className="text-sm text-emerald-600" />
+                        <TbMoped size={16} className="text-white" />
                         <span>Delivery: <strong>${deliveryFee}</strong></span>
                     </button>
 
@@ -538,19 +538,17 @@ const AdminOrders = () => {
                     {viewMode === 'live' ? (
                         <button
                             onClick={() => setViewMode('history')}
-                            className="btn btn-sm bg-white hover:bg-gray-50 border border-gray-200 rounded-full text-xs gap-1.5 text-gray-800 shadow-xs"
-                            title="Ver historial de pedidos finalizados"
+                            className="rounded-xl bg-neutral hover:bg-black/90 px-4 py-1.5 gap-1.5 text-sm font-normal text-white flex items-center"
                         >
-                            <FaHistory size={12} className="text-gray-500" />
+                            <TbHistory size={16} className="text-white" />
                             <span>Historial de pedidos</span>
                         </button>
                     ) : (
                         <button
                             onClick={() => setViewMode('live')}
-                            className="btn btn-sm bg-neutral text-white hover:bg-neutral-800 border-none rounded-full text-xs gap-1.5 shadow-xs"
-                            title="Volver al tablero de comandas"
+                            className="rounded-xl bg-neutral hover:bg-black/90 px-4 py-1.5 gap-1.5 text-sm font-normal text-white flex items-center"
                         >
-                            <FaFire size={12} className="text-amber-400" />
+                            <TbReceipt size={16} className="text-white" />
                             <span>Gestor de comandas</span>
                         </button>
                     )}
@@ -669,11 +667,11 @@ const AdminOrders = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-xs p-4">
                     <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full border border-gray-100 shadow-xl">
                         <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center text-xl mb-3">
-                            <FaMotorcycle />
+                            <TbMoped size={24} />
                         </div>
                         <h3 className="text-xl font-bold text-gray-900 text-center">Valor del Delivery</h3>
                         <p className="text-xs text-gray-500 text-center mt-1 mb-6">
-                            Este monto se sumará automáticamente a todos los pedidos y carritos de Baradero.
+                            Este monto se sumará automáticamente a todos los pedidos.
                         </p>
 
                         <form onSubmit={handleSaveDeliveryFee} className="flex flex-col gap-4">
@@ -685,24 +683,24 @@ const AdminOrders = () => {
                                     required
                                     value={newDeliveryFee}
                                     onChange={(e) => setNewDeliveryFee(e.target.value)}
-                                    className="w-full pl-8 pr-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 font-bold text-lg text-gray-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-neutral"
+                                    className="w-full pl-8 pr-4 py-1.5 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-lg text-gray-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-neutral"
                                     placeholder="0"
                                     autoFocus
                                 />
                             </div>
 
-                            <div className="flex gap-2 mt-2">
+                            <div className="grid grid-cols-2 gap-3 mt-2 -mb-2">
                                 <button
                                     type="button"
                                     onClick={() => setIsDeliveryModalOpen(false)}
-                                    className="btn flex-1 rounded-full text-xs font-semibold btn-ghost"
+                                    className="rounded-xl bg-gray-200 hover:bg-gray-300 px-4 py-2 text-sm font-medium text-gray-800 flex items-center justify-center transition-colors cursor-pointer"
                                 >
                                     Cancelar
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isUpdatingDelivery}
-                                    className="btn flex-1 rounded-full text-xs font-bold bg-neutral text-white hover:bg-neutral-800"
+                                    className="rounded-xl bg-neutral hover:bg-black/90 px-4 py-2 text-sm font-medium text-white flex items-center justify-center transition-colors disabled:opacity-50 cursor-pointer"
                                 >
                                     {isUpdatingDelivery ? 'Guardando...' : 'Guardar'}
                                 </button>
@@ -711,7 +709,7 @@ const AdminOrders = () => {
                     </div>
                 </div>
             )}
-        
+
             {/* Modal de confirmación para cancelar comanda */}
             <ConfirmModal
                 isOpen={Boolean(cancelingOrder)}

@@ -62,46 +62,47 @@ const DefaultProductCard = ({ product }) => {
     return (
         <div className="bg-white w-48 min-w-48 shrink-0 shadow-sm rounded-[1.5rem] p-2.5 flex flex-col gap-2 transition-transform hover:scale-[1.02] border border-gray-100">
             {/* Imagen del producto */}
-            <div className="relative w-full aspect-square rounded-[1rem] overflow-hidden bg-gray-50">
+            <div className={`relative w-full aspect-square rounded-[1rem] overflow-hidden bg-gray-50 ${isAddDisabled ? 'opacity-50' : ''}`}>
                 <img
                     className="w-full h-full object-cover"
                     src={imageUrl}
                     alt={name}
                 />
+                {stock === 0 && !isFlavorProduct && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <span className="px-2 py-1 rounded-full bg-gray-200/95 text-gray-800 text-[10px] font-semibold leading-none ">
+                            Sin stock
+                        </span>
+                    </div>
+                )}
             </div>
 
             {/* Contenido: Nombre + Descripción */}
             <div className="px-1 flex flex-col flex-1 pb-1">
-                <p className="font-bold text-sm leading-tight text-gray-900 line-clamp-1" title={name}>
+                <p className={`font-semibold text-sm leading-tight text-gray-800 line-clamp-1 ${isAddDisabled ? 'opacity-50' : ''}`} title={name}>
                     {name}
                 </p>
                 {description && (
-                    <p className="text-xs font-medium text-gray-400 line-clamp-2 mt-0.5">
+                    <p className="text-xs font-normal text-gray-400 line-clamp-2 mt-0.5">
                         {description}
                     </p>
                 )}
 
-                {/* Espaciador flexible para empujar el precio y botón al fondo */}
-                <div className="flex-1 min-h-3"></div>
+
 
                 {/* Fila inferior: Precio a la izquierda y Botón Redondo (+) a la derecha */}
                 <div className="flex justify-between items-center pt-2">
                     <div className="flex flex-col">
-                        <span className="font-black text-base text-gray-900 tracking-tight">
+                        <span className={`font-bold text-base text-gray-800 tracking-tight ${isAddDisabled ? 'opacity-50' : ''}`}>
                             ${price}
                         </span>
-                        {stock === 0 && !isFlavorProduct && (
-                            <span className="text-[10px] font-bold text-red-500 leading-none">
-                                Sin stock
-                            </span>
-                        )}
                     </div>
 
                     <button
                         type="button"
                         onClick={handleAddToCart}
                         disabled={isAddDisabled}
-                        className="w-8 h-8 rounded-full bg-neutral text-white hover:bg-neutral-800 flex items-center justify-center transition-all shadow-xs hover:shadow-md active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shrink-0"
+                        className="w-8 h-8 rounded-full bg-gray-800 text-white hover:bg-neutral flex items-center justify-center transition-all shadow-xs hover:shadow-md active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shrink-0"
                         title={stock === 0 && !isFlavorProduct ? 'Sin stock' : 'Añadir al carrito'}
                         aria-label={`Añadir ${name} al carrito`}
                     >

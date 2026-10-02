@@ -17,6 +17,8 @@ import ForgotPassword from './pages/ForgotPassword.jsx'
 import Contacto from './pages/Contacto.jsx'
 import Nosotros from './pages/Nosotros.jsx'
 import Franquicias from './pages/Franquicias.jsx'
+import MyOrdersPage from './pages/MyOrdersPage.jsx'
+
 
 function App() {
     return (
@@ -32,6 +34,8 @@ function App() {
                             <Route path="/contacto" element={<Contacto />} />
                             <Route path="/nosotros" element={<Nosotros />} />
                             <Route path="/franquicias" element={<Franquicias />} />
+
+
                             <Route
                                 path="/detailProduct/:id"
                                 element={<DetailProduct />}
@@ -48,6 +52,7 @@ function App() {
                                 path="/checkout"
                                 element={<CheckoutPage />}
                             />
+                            <Route path="/mis-compras" element={<MyOrdersPage />} />
                         </Route>
 
                         <Route

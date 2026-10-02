@@ -1,10 +1,11 @@
-import { FiUser } from 'react-icons/fi'
+import { FiUser, FiShoppingBag } from 'react-icons/fi'
 import { Link, useLocation } from 'react-router-dom'
 import { useUser } from '../../context/userContextData'
 import toast from 'react-hot-toast'
 import { logoutService } from '../../services/authServices'
 import ConfirmModal from '../Common/ConfirmModal'
 import { useState } from 'react'
+import { TbBuildingStore, TbShoppingBagCheck, TbLogout, TbUserShield } from "react-icons/tb";
 
 const UserDropDown = () => {
     const { userInfo, setUserInfo, isAdmin } = useUser()
@@ -50,14 +51,26 @@ const UserDropDown = () => {
                         </div>
 
                         <div className="flex flex-col">
-                            <span className="font-medium text-gray-800">
+                            <span className="font-medium text-gray-800 -mt-1">
                                 {userInfo?.username}
                             </span>
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-gray-500 -mt-1">
                                 {userInfo?.email}
                             </span>
                         </div>
                     </div>
+                </li>
+
+                {/* Opción Mis compras para el usuario logueado */}
+                <li>
+                    <Link
+                        to="/mis-compras"
+                        onClick={() => document.activeElement?.blur()}
+                        className="rounded-xl hover:bg-gray-200 bg-gray-200/60 text-gray-700 font-medium py-2.5 flex items-center gap-2.5 transition-colors"
+                    >
+                        <TbShoppingBagCheck className="text-gray-500" size={20} />
+                        <span>Mis compras</span>
+                    </Link>
                 </li>
 
                 {/* Botón dinámico: si está en admin va a Tienda, si está en la tienda va a Admin */}
@@ -66,15 +79,20 @@ const UserDropDown = () => {
                         {isInAdmin ? (
                             <Link
                                 to="/"
-                                className="rounded-xl hover:bg-gray-100 bg-gray-50 text-gray-700 font-medium py-2.5"
+                                onClick={() => document.activeElement?.blur()}
+                                className="rounded-xl hover:bg-gray-200 bg-gray-200/60 text-gray-700 font-medium py-2.5"
                             >
+                                <TbBuildingStore size={20} className="text-gray-500" />
                                 Tienda online
                             </Link>
                         ) : (
                             <Link
                                 to="/admin/dashboard"
-                                className="rounded-xl hover:bg-gray-100 bg-gray-50 text-gray-700 font-medium py-2.5"
+                                onClick={() => document.activeElement?.blur()}
+                                className="rounded-xl hover:bg-gray-200 bg-gray-200/60 text-gray-700 font-medium py-2.5"
                             >
+
+                                <TbUserShield size={20} className="text-gray-500" />
                                 Panel de Administración
                             </Link>
                         )}
@@ -86,7 +104,7 @@ const UserDropDown = () => {
                         onClick={() => setIsLogoutModalOpen(true)}
                         className="rounded-xl hover:bg-red-100 text-red-600 bg-red-50 font-medium py-2.5 text-left"
                     >
-                        Cerrar Sesión
+                        <TbLogout size={20} className="text-red-500" />Cerrar Sesión
                     </button>
                 </li>
             </ul>

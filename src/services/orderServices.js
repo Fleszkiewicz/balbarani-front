@@ -39,3 +39,16 @@ export const updateOrderStatusService = async (orderId, updates) => {
     }
 }
 
+
+// Obtener el historial y compras en curso del usuario autenticado
+export const getMyOrdersService = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/my-orders`)
+        return response.data.orders
+    } catch (error) {
+        throw new Error(
+            error.response?.data?.message || 'Error al obtener tus compras',
+            { cause: error }
+        )
+    }
+}

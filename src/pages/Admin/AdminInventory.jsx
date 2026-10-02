@@ -2,9 +2,10 @@ import { useState, useEffect, useMemo } from 'react'
 import { getAllProductsService, updateProductService } from '../../services/productServices'
 import { getFlavorsService, createFlavorService, updateFlavorService, deleteFlavorService } from '../../services/flavorServices'
 import { toast } from 'react-hot-toast'
-import { FaPlus, FaIceCream, FaBoxes, FaSearch } from 'react-icons/fa'
+import { FaPlus, FaSearch } from 'react-icons/fa'
 import { FiTrash } from 'react-icons/fi'
 import ConfirmModal from '../../components/Common/ConfirmModal'
+import { TbIceCream2, TbPackage, TbTrash } from 'react-icons/tb'
 
 // Categorías oficiales de sabores
 const FLAVOR_CATEGORIES = ['Cremas', 'Frutales', 'Chocolates', 'Dulce de leches']
@@ -205,20 +206,19 @@ const AdminInventory = () => {
                     {activeTab === 'stock' ? (
                         <button
                             onClick={() => setActiveTab('flavors')}
-                            className="btn btn-sm bg-white hover:bg-gray-50 border border-gray-200 rounded-full text-xs gap-1.5 text-gray-800 shadow-xs cursor-pointer"
-                            title="Ir a disponibilidad de sabores"
+                            className="rounded-xl bg-neutral hover:bg-black/90 px-4 py-1.5 gap-1.5 text-sm font-normal text-white flex items-center"
+
                         >
-                            <FaIceCream className="text-amber-500 text-xs" />
-                            <span className="font-medium">Disponibilidad de sabores</span>
+                            <TbIceCream2 className="text-white" />
+                            <span className="font-normal">Disponibilidad de sabores</span>
                         </button>
                     ) : (
                         <button
                             onClick={() => setActiveTab('stock')}
-                            className="btn btn-sm bg-neutral text-white hover:bg-neutral-800 border-none rounded-full text-xs gap-1.5 shadow-xs cursor-pointer"
-                            title="Volver al stock físico"
+                            className="rounded-xl bg-neutral hover:bg-black/90 px-4 py-1.5 gap-1.5 text-sm font-normal text-white flex items-center"
                         >
-                            <FaBoxes className="text-gray-300 text-xs" />
-                            <span className="font-medium">Stock físico</span>
+                            <TbPackage className="text-white" />
+                            <span className="font-normal">Stock físico</span>
                         </button>
                     )}
                 </div>
@@ -226,7 +226,7 @@ const AdminInventory = () => {
 
             {/* VISTA 1: TABLAS DE STOCK FÍSICO POR CATEGORÍA Y SUBCATEGORÍA (ORIGINAL CON ESTADO) */}
             {activeTab === 'stock' && (
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-6 mx-auto grid w-full max-w-md sm:max-w-2xl md:max-w-2xl lg:max-w-6xl">
                     {/* Barra de Filtros y Búsqueda */}
                     <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-gray-200/90 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                         {/* Buscador */}
@@ -274,18 +274,16 @@ const AdminInventory = () => {
                                     className="bg-white rounded-2xl border border-gray-200/90 shadow-xs overflow-hidden"
                                 >
                                     {/* 1. Header de Categoría Principal */}
-                                    <div className="bg-gray-100/90 px-4 sm:px-6 py-3 border-b border-gray-200 flex flex-wrap items-center justify-between gap-2">
+                                    <div className="bg-gray-100/70 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-2">
                                         <div className="flex items-center gap-2.5">
                                             <h2 className="font-bold text-base sm:text-lg text-gray-900 tracking-tight">
                                                 {categoryName}
                                             </h2>
-                                            <span className="text-[11px] font-semibold text-gray-600 bg-white px-2.5 py-0.5 rounded-full border border-gray-200 shadow-2xs">
-                                                {totalCategoryProds} {totalCategoryProds === 1 ? 'producto' : 'productos'}
-                                            </span>
+
                                         </div>
-                                        <div className="text-xs text-gray-500 font-medium">
-                                            Stock total: <span className="font-bold text-gray-800">{totalCategoryStock} u.</span>
-                                        </div>
+                                        <span className="text-[11px] font-bold text-gray-600 bg-white px-2.5 py-0.5 rounded-full ">
+                                            {totalCategoryProds} {totalCategoryProds === 1 ? 'producto' : 'productos'}
+                                        </span>
                                     </div>
 
                                     {/* 2. Subcategorías y Tablas Compactas */}
@@ -293,7 +291,7 @@ const AdminInventory = () => {
                                         {Object.entries(subcategories).map(([subcategoryName, subcategoryProducts]) => (
                                             <div key={subcategoryName} className="p-0">
                                                 {/* Barra de Subcategoría */}
-                                                <div className="bg-gray-50/60 px-4 sm:px-6 py-2 border-b border-gray-100 flex items-center justify-between">
+                                                <div className="bg-gray-50/60 px-4 sm:px-6 py-2 border-b border-t border-gray-200 flex items-center justify-between">
                                                     <span className="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
                                                         <span className="w-1.5 h-1.5 rounded-full bg-pink-500"></span>
                                                         {subcategoryName}
@@ -337,7 +335,7 @@ const AdminInventory = () => {
                                                                                 <p className="font-semibold text-xs sm:text-sm text-gray-900 truncate" title={product.name}>
                                                                                     {product.name}
                                                                                 </p>
-                                                                                <p className="text-[11px] font-normal text-gray-400">
+                                                                                <p className="text-[11px] font-normal text-gray-500">
                                                                                     ${product.price}
                                                                                 </p>
                                                                             </div>
@@ -348,15 +346,15 @@ const AdminInventory = () => {
                                                                     <td className="py-2 px-2 sm:px-4 text-right">
                                                                         <div className="flex items-center justify-end">
                                                                             {product.stock === 0 ? (
-                                                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 whitespace-nowrap">
+                                                                                <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold bg-red-100 text-red-700 whitespace-nowrap">
                                                                                     Agotado
                                                                                 </span>
                                                                             ) : product.stock <= 3 ? (
-                                                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 whitespace-nowrap">
+                                                                                <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold bg-amber-100 text-amber-700 whitespace-nowrap">
                                                                                     Bajo stock
                                                                                 </span>
                                                                             ) : (
-                                                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
+                                                                                <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-100 text-emerald-700 whitespace-nowrap">
                                                                                     En stock
                                                                                 </span>
                                                                             )}
@@ -389,7 +387,7 @@ const AdminInventory = () => {
 
                                                                             {/* Botón sumar 10 rápido */}
                                                                             <button
-                                                                                className="h-8 px-2.5 rounded-xl bg-gray-100 hover:bg-gray-200/80 text-[11px] font-medium text-gray-700 transition-colors cursor-pointer"
+                                                                                className="h-8 px-2.5 rounded-xl bg-gray-100 hover:bg-gray-200/80 text-[11px] font-bold text-gray-700 transition-colors cursor-pointer"
                                                                                 onClick={() => handleStockChange(product._id, product.stock, 10)}
                                                                                 title="Sumar 10 unidades rápido"
                                                                             >
@@ -458,28 +456,28 @@ const AdminInventory = () => {
                         </form>
                     </div>
 
-                    {/* Pestañas de Filtro por Categoría de Sabores */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                    {/* Barra de Filtros de Categorías de Sabores (Estilo Historial de Pedidos) */}
+                    <div className="flex items-center gap-2 bg-white p-2 rounded-2xl border border-gray-200 w-fit overflow-x-auto">
                         <button
                             type="button"
                             onClick={() => setSelectedFlavorCategoryFilter('ALL')}
-                            className={`btn btn-xs rounded-full px-3.5 border-none font-semibold text-xs cursor-pointer transition-all ${selectedFlavorCategoryFilter === 'ALL'
-                                    ? 'bg-neutral text-white shadow-2xs'
-                                    : 'bg-white hover:bg-gray-100 text-gray-600 border border-gray-200'
+                            className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${selectedFlavorCategoryFilter === 'ALL'
+                                    ? 'bg-gray-100 text-black'
+                                    : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
                             Todas ({flavors.length})
                         </button>
                         {FLAVOR_CATEGORIES.map((cat) => {
-                            const count = flavors.filter(f => (f.category || 'Cremas') === cat).length
+                            const count = flavors.filter((f) => (f.category || 'Cremas') === cat).length
                             return (
                                 <button
                                     key={cat}
                                     type="button"
                                     onClick={() => setSelectedFlavorCategoryFilter(cat)}
-                                    className={`btn btn-xs rounded-full px-3.5 border-none font-semibold text-xs cursor-pointer transition-all ${selectedFlavorCategoryFilter === cat
-                                            ? 'bg-neutral text-white shadow-2xs'
-                                            : 'bg-white hover:bg-gray-100 text-gray-600 border border-gray-200'
+                                    className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${selectedFlavorCategoryFilter === cat
+                                            ? 'bg-gray-100 text-black'
+                                            : 'text-gray-600 hover:text-gray-900'
                                         }`}
                                 >
                                     {cat} ({count})
@@ -487,6 +485,7 @@ const AdminInventory = () => {
                             )
                         })}
                     </div>
+
 
                     {/* Listado de Sabores Agrupados por Categoría */}
                     <div className="flex flex-col gap-5">
@@ -501,10 +500,11 @@ const AdminInventory = () => {
                                         <h3 className="font-bold text-sm text-gray-900">
                                             {category}
                                         </h3>
-                                        <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full">
-                                            {availableCount} de {totalCount} disponibles
-                                        </span>
+
                                     </div>
+                                    <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg">
+                                        {availableCount} de {totalCount} disponibles
+                                    </span>
                                 </div>
 
                                 {catFlavors.length === 0 ? (
@@ -529,8 +529,8 @@ const AdminInventory = () => {
                                                     >
                                                         <td className="py-2.5 px-4">
                                                             <span className={`text-xs sm:text-sm ${flavor.available
-                                                                    ? 'font-medium text-gray-900'
-                                                                    : 'font-normal text-gray-400 line-through'
+                                                                ? 'font-medium text-gray-900'
+                                                                : 'font-normal text-gray-400 line-through'
                                                                 }`}>
                                                                 {flavor.name}
                                                             </span>
@@ -554,11 +554,11 @@ const AdminInventory = () => {
                                                         <td className="py-2.5 px-4 text-right">
                                                             <button
                                                                 type="button"
-                                                                className="w-7 h-7 inline-flex items-center justify-center rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                                                                className="w-7 h-7 inline-flex items-center justify-center rounded-full text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                                                                 onClick={() => setDeletingFlavor(flavor)}
                                                                 title="Eliminar sabor permanentemente"
                                                             >
-                                                                <FiTrash size={14} />
+                                                                <TbTrash size={16} />
                                                             </button>
                                                         </td>
                                                     </tr>

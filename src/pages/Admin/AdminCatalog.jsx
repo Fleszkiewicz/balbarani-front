@@ -7,6 +7,9 @@ import ConfirmModal from '../../components/Common/ConfirmModal'
 import { FiEdit2, FiTrash, FiGrid } from 'react-icons/fi'
 import { LuArrowDownUp } from 'react-icons/lu'
 import ManageCatalogView from './ManageCatalogView.jsx'
+import { FaArrowRight } from 'react-icons/fa'
+import { TbPlus, TbCategory, TbCategoryPlus, TbPencil, TbTrash } from 'react-icons/tb'
+
 
 const AdminCatalog = () => {
     const [categories, setCategories] = useState([])
@@ -65,7 +68,7 @@ const AdminCatalog = () => {
     return (
         <div className="pb-16">
             {/* Cabecera Superior: Idéntica a Inventario de Stock / Sabores (abarca todo el ancho) */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 mt-6">
                 <div>
                     {viewMode === 'catalog' ? (
                         <>
@@ -96,20 +99,21 @@ const AdminCatalog = () => {
                             <button
                                 type="button"
                                 onClick={() => setViewMode('manage')}
-                                className="btn btn-sm bg-white hover:bg-gray-50 border border-gray-200 rounded-full text-xs gap-1.5 text-gray-800 shadow-xs cursor-pointer font-medium"
+                                className="rounded-xl bg-neutral hover:bg-black/90 px-4 py-1.5 gap-1.5 text-sm font-normal text-white flex items-center"
                                 title="Administrar orden del catálogo"
                             >
-                                <LuArrowDownUp className="text-neutral-700 text-xs" />
+                                <LuArrowDownUp size={16} className="text-white" />
                                 <span>Administrar Catálogo</span>
                             </button>
 
                             {/* Botón negro para Añadir categoría */}
                             <button
                                 type="button"
-                                className="rounded-full bg-neutral px-4 py-1.5 text-sm font-semibold text-neutral-content shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+                                className="rounded-xl bg-neutral hover:bg-black/90 px-4 py-1.5 gap-1.5 text-sm font-normal text-white flex items-center"
                                 onClick={() => setIsCreateOpen(true)}
                             >
-                                + Añadir categoría
+                                <TbCategoryPlus size={16} className="text-white" />
+                                Añadir categoría
                             </button>
                         </>
                     ) : (
@@ -120,11 +124,10 @@ const AdminCatalog = () => {
                                 setViewMode('catalog')
                                 fetchCategories()
                             }}
-                            className="btn btn-sm bg-white hover:bg-gray-50 border border-gray-200 rounded-full text-xs gap-1.5 text-gray-800 shadow-xs cursor-pointer font-medium"
-                            title="Volver al catálogo"
+                            className="rounded-xl bg-neutral hover:bg-black/90 px-4 py-1.5 gap-1.5 text-sm font-normal text-white flex items-center"
                         >
-                            <FiGrid className="text-neutral-700 text-xs" />
-                            <span>Catálogo</span>
+                            <TbCategory size={16} className="text-white" />
+                            <span>Volver al Catálogo</span>
                         </button>
                     )}
                 </div>
@@ -133,58 +136,113 @@ const AdminCatalog = () => {
             {/* Contenido dinámico según el modo de vista */}
             {viewMode === 'catalog' ? (
                 <>
-                    {/* Grilla de Tarjetas de Categorías */}
-                    <div className="flex flex-wrap gap-5 justify-center pb-10">
+                    {/* Grilla de Tarjetas de Categorías (Idéntica a la Tienda Online) */}
+                    <div className="mx-auto grid w-full max-w-md sm:max-w-2xl md:max-w-2xl lg:max-w-6xl grid-cols-2 sm:grid-cols-2 gap-6 pb-6">
                         {categories.map((category) => (
                             <div
                                 key={category._id}
-                                className="bg-white w-80 lg:w-[30%] shadow-sm rounded-[2rem] p-3 flex flex-col gap-3 transition-transform hover:scale-[1.02] border border-gray-100"
+                                className="
+                                    group
+                                    relative
+                                    h-72
+                                    overflow-hidden
+                                    rounded-3xl
+                                    bg-gray-900
+                                    border border-gray-200/80
+                                    shadow-sm
+                                    hover:shadow-xl
+                                    transition-all
+                                    duration-500
+                                "
                             >
-                                <div className="relative w-full aspect-[4/3] rounded-[1.5rem] overflow-hidden bg-gray-50">
+                                {/* Imagen de Fondo con Zoom Suave en hover */}
+                                {category.imageUrl && (
                                     <img
-                                        className="w-full h-full object-cover"
                                         src={category.imageUrl}
                                         alt={category.name}
+                                        className="
+                                            absolute
+                                            inset-0
+                                            h-full
+                                            w-full
+                                            object-cover
+                                            transition-transform
+                                            duration-700
+                                            ease-out
+                                            group-hover:scale-105
+                                        "
                                     />
-                                </div>
-                                <div className="px-1 flex flex-col flex-1 gap-2 pb-1">
-                                    <h2 className="font-bold text-xl leading-tight text-gray-900">{category.name}</h2>
-                                    {category.description && (
-                                        <p className="text-sm text-gray-500 line-clamp-2">{category.description}</p>
-                                    )}
+                                )}
 
-                                    <div className="flex-1"></div>
+                                {/* Degradado Oscuro para Legibilidad */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent transition-opacity duration-300 group-hover:opacity-90 pointer-events-none"></div>
 
-                                    <div className="flex justify-between items-center mt-2">
-                                        <div className="flex gap-2">
-                                            <button
-                                                type="button"
-                                                className="w-10 h-10 rounded-full bg-blue-100 text-blue-500 hover:bg-blue-200 flex items-center justify-center transition-colors"
-                                                aria-label={`Editar ${category.name}`}
-                                                onClick={() => setEditingCategory(category)}
-                                            >
-                                                <FiEdit2 size={18} />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="w-10 h-10 rounded-full bg-red-100 text-red-500 hover:bg-red-200 flex items-center justify-center transition-colors"
-                                                aria-label={`Eliminar ${category.name}`}
-                                                onClick={() => setDeletingCategory(category)}
-                                            >
-                                                <FiTrash size={18} />
-                                            </button>
-                                        </div>
-                                        <Link
-                                            to={`/admin/dashboard/catalogo/${category.slug}`}
-                                            className="px-4 py-2.5 rounded-full bg-black text-white font-medium transition-colors text-sm"
+                                {/* Enlace de fondo para que al hacer clic en la tarjeta navegue a la categoría */}
+                                <Link
+                                    to={`/admin/dashboard/catalogo/${category.slug}`}
+                                    className="absolute inset-0 z-0"
+                                    aria-label={`Ver ${category.name}`}
+                                />
+
+                                {/* Barra Superior: Botones Editar / Eliminar a la izquierda y 'Ver productos' a la derecha */}
+                                <div className="absolute top-4 inset-x-4 flex justify-between items-center z-10 pointer-events-auto">
+                                    {/* Botones de acción rápida */}
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            type="button"
+                                            className="w-9 h-9 rounded-full bg-blue-100 text-blue-500 hover:bg-blue-200 flex items-center justify-center transition-colors"
+                                            aria-label={`Editar ${category.name}`}
+                                            title="Editar categoría"
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                setEditingCategory(category)
+                                            }}
                                         >
-                                            Ver más
-                                        </Link>
+                                            <TbPencil size={18} />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="w-9 h-9 rounded-full bg-red-100 text-red-500 hover:bg-red-200 flex items-center justify-center transition-colors"
+                                            aria-label={`Eliminar ${category.name}`}
+                                            title="Eliminar categoría"
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                setDeletingCategory(category)
+                                            }}
+                                        >
+                                            <TbTrash size={18} />
+                                        </button>
                                     </div>
+
+                                    {/* Badge Superior: Ver productos */}
+                                    <Link
+                                        to={`/admin/dashboard/catalogo/${category.slug}`}
+                                        className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md text-white text-[11px] font-bold px-3 py-1 rounded-full border border-white/20 hover:bg-white hover:text-gray-900 transition-colors shadow-2xs"
+                                    >
+                                        <span>Ver productos</span>
+                                        <FaArrowRight size={9} />
+                                    </Link>
                                 </div>
+
+                                {/* Contenido Inferior: Nombre y Descripción */}
+                                <Link
+                                    to={`/admin/dashboard/catalogo/${category.slug}`}
+                                    className="absolute inset-x-0 bottom-0 p-6 flex flex-col justify-end z-10 pointer-events-auto cursor-pointer"
+                                >
+                                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white drop-shadow-md">
+                                        {category.name}
+                                    </h2>
+
+                                    {category.description && (
+                                        <p className="text-xs sm:text-sm text-gray-200/90 font-normal leading-relaxed mt-1 line-clamp-2 drop-shadow-sm">
+                                            {category.description}
+                                        </p>
+                                    )}
+                                </Link>
                             </div>
                         ))}
                     </div>
+
 
                     {/* Modal Crear */}
                     {isCreateOpen && (

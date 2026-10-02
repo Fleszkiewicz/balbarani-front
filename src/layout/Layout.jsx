@@ -4,11 +4,12 @@ import Footer from '../components/Footer/Footer.jsx'
 
 const Layout = () => {
     return (
-        <div className="min-h-screen flex flex-col justify-between bg-gray-100 overflow-x-hidden">
-            {/* Navbar a ancho completo */}
+        // Usamos overflow-x-clip en vez de overflow-x-hidden para no romper el 'sticky' del Navbar
+        <div className="min-h-screen flex flex-col justify-between bg-gray-100 overflow-x-clip">
+            {/* Navbar fijo al hacer scroll */}
             <Navbar />
 
-            {/* Contenido principal a ancho completo */}
+            {/* Contenido principal */}
             <main className="flex-1 w-full">
                 <Outlet />
             </main>
